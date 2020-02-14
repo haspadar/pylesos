@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\DownloadProxies::class,
+        Commands\DownloadUserAgents::class,
         Commands\ListProxies::class,
     ];
 

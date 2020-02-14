@@ -36,7 +36,7 @@ trait SiteParserTrait
      * @param Client $client
      * @return Proxy[]
      */
-    public function downloadSite(Client $client): array
+    protected function downloadSite(Client $client): array
     {
         $this->client = $client;
         $rows = [];

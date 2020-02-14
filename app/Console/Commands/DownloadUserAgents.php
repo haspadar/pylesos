@@ -3,25 +3,26 @@
 namespace App\Console\Commands;
 
 use App\Library\Services\SiteWithProxies;
+use App\Library\Services\SiteWithUserAgents;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
-class DownloadProxies extends Command
+class DownloadUserAgents extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'proxies:download';
+    protected $signature = 'user_agents:download';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Download proxies from site';
+    protected $description = 'Download user agents from site';
 
     /**
      * Create a new command instance.
@@ -36,12 +37,12 @@ class DownloadProxies extends Command
     /**
      * Execute the console command.
      *
-     * @param SiteWithProxies $site
+     * @param SiteWithUserAgents $site
      * @return mixed
      */
-    public function handle(SiteWithProxies $site)
+    public function handle(SiteWithUserAgents $site)
     {
-        $proxies = $site->downloadProxies(new Client([
+        $userAgents = $site->downloadUserAgents(new Client([
             'curl' => [
                 CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2
 //                CURLOPT_PROXY => 'proxyip:58080'
@@ -49,10 +50,11 @@ class DownloadProxies extends Command
             'timeout' => 5,
             'headers' => ['User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148']
         ]));
-        foreach ($proxies as $proxy) {
-            app('db')->insert('insert into proxies (address, protocol, created_at) values (?, ?, ?)', [
-                $proxy->getAddress(),
-                $proxy->getProtocol(),
+        foreach ($userAgents as $userAgent) {
+            var_dump($userAgent);
+            app('db')->insert('insert into user_agents (user_agent, is_mobile, created_at) values (?, ?, ?)', [
+                $userAgent,
+                mb_strpos($userAgent, 'Mobile') !== false,
                 Carbon::now('Europe/Minsk')->toDateTimeString()
             ]);
         }

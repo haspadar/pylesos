@@ -18,7 +18,7 @@ class UpdateProxiesTest extends TestCase
             new \App\Library\Proxy('1.1.1.1:8080', 'https'),
             new \App\Library\Proxy('1.1.1.2:3128', 'https'),
         ];
-        $mock->method('downloadSite')
+        $mock->method('downloadProxies')
             ->willReturn($proxies);
         $this->app->instance(\App\Library\Services\SiteWithProxies::class, $mock);
         $returnCode = $this->artisan('proxies:download');

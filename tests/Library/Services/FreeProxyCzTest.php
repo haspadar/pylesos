@@ -30,9 +30,6 @@ class FreeProxyCzTest extends TestCase
         $mock = new MockHandler([
             new Response(200, [], file_get_contents($responsesDirectory . '/page1.html')),
             new Response(200, [], file_get_contents($responsesDirectory . '/page2.html')),
-//            new Response(200, [], file_get_contents($responsesDirectory . '/page3.html')),
-//            new Response(200, [], file_get_contents($responsesDirectory . '/page4.html')),
-//            new Response(200, [], file_get_contents($responsesDirectory . '/page5.html')),
         ]);
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(['handler' => $handlerStack]);
@@ -41,13 +38,7 @@ class FreeProxyCzTest extends TestCase
             new \App\Library\Proxy('1.1.1.1:8080', 'https'),
             new \App\Library\Proxy('1.1.1.2:3128', 'https'),
             new \App\Library\Proxy('2.2.2.1:8080', 'https'),
-            new \App\Library\Proxy('2.2.2.2:3128', 'https'),
-//            new \App\Library\Proxy('3.3.3.1:8080', 'https'),
-//            new \App\Library\Proxy('3.3.3.2:3128', 'https'),
-//            new \App\Library\Proxy('4.4.4.1:8080', 'https'),
-//            new \App\Library\Proxy('4.4.4.2:3128', 'https'),
-//            new \App\Library\Proxy('5.5.5.1:8080', 'https'),
-//            new \App\Library\Proxy('5.5.5.2:3128', 'https'),
+            new \App\Library\Proxy('2.2.2.2:3128', 'https')
         ], $proxies);
     }
 }
