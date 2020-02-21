@@ -15,7 +15,7 @@ class DownloadUserAgents extends Command
      *
      * @var string
      */
-    protected $signature = 'user_agents:download';
+    protected $signature = 'users_agents:download';
 
     /**
      * The console command description.
@@ -54,8 +54,8 @@ class DownloadUserAgents extends Command
         $updatedCount = 0;
         foreach ($userAgents as $userAgent) {
             if (app('db')
-                ->table('user_agents')
-                ->where('address', $userAgent)
+                ->table('users_agents')
+                ->where('user_agent', $userAgent)
                 ->update([
                     'user_agent' => $userAgent,
                     'updated_at' => Carbon::now('Europe/Minsk')->toDateTimeString()
@@ -64,7 +64,7 @@ class DownloadUserAgents extends Command
                 $updatedCount++;
             } else {
                 app('db')
-                    ->table('user_agents')
+                    ->table('users_agents')
                     ->insert([
                         'user_agent' => $userAgent,
                         'is_mobile' => mb_strpos($userAgent, 'Mobile') !== false,

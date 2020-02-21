@@ -2,7 +2,7 @@
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
-class RotatorTest extends TestCase
+class ProxyRotatorTest extends TestCase
 {
     use DatabaseMigrations;
 
@@ -29,7 +29,7 @@ class RotatorTest extends TestCase
      */
     public function testNext()
     {
-        $rotator = new \App\Library\Rotator('http://google.com');
+        $rotator = new \App\Library\ProxyRotator('http://google.com');
         $this->assertEquals($rotator->getLiveProxy()->getAddress(), $this->proxies[0][0]);
         $this->assertEquals($rotator->getProxiesCount(), count($this->proxies));
         $rotator->blockProxy($rotator->getLiveProxy());
@@ -39,7 +39,7 @@ class RotatorTest extends TestCase
 
     public function testCircle()
     {
-        $rotator = new \App\Library\Rotator('http://google.com');
+        $rotator = new \App\Library\ProxyRotator('http://google.com');
         $rotator->blockProxy($rotator->getLiveProxy());
         $rotator->blockProxy($rotator->getLiveProxy());
         $rotator->blockProxy($rotator->getLiveProxy());

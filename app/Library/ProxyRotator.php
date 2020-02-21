@@ -1,7 +1,7 @@
 <?php
 namespace App\Library;
 
-class Rotator
+class ProxyRotator
 {
     private Site $site;
 

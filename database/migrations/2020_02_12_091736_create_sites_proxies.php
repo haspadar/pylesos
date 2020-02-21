@@ -25,7 +25,7 @@ class CreateSitesProxies extends Migration
                 ->references('id')
                 ->on('proxies')
                 ->onDelete('cascade');;
-            $table->timestamp('created_at')->nullable();
+            $table->nullableTimestamps();
         });
     }
 

@@ -21,10 +21,10 @@ class UpdateUserAgentsTest extends TestCase
         $mock->method('downloadUserAgents')
             ->willReturn(array_keys($userAgents));
         $this->app->instance(\App\Library\Services\SiteWithUserAgents::class, $mock);
-        $returnCode = $this->artisan('user_agents:download');
+        $returnCode = $this->artisan('users_agents:download');
         $this->assertEquals(0, $returnCode);
         foreach ($userAgents as $userAgent => $isMobile) {
-            $this->seeInDatabase('user_agents', [
+            $this->seeInDatabase('users_agents', [
                 'user_agent' => $userAgent,
                 'is_mobile' => $isMobile
             ]);

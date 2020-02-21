@@ -15,7 +15,7 @@ class DownloadPageTest extends TestCase
     {
         $this->assertTrue(true);
         return;
-        $url = '/test';
+        $url = '/';
         $mock = new \GuzzleHttp\Handler\MockHandler([
             new \GuzzleHttp\Psr7\Response(202, ['Content-Length' => 0]),
             new \GuzzleHttp\Exception\RequestException(
@@ -29,14 +29,14 @@ class DownloadPageTest extends TestCase
             'handler' => $handlerStack,
             'curl' => [
                 CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
-                CURLOPT_PROXY => 'proxyip:58080'
+                CURLOPT_PROXY => new \App\Library\ProxyRotator()
             ],
             'timeout' => 5,
             'headers' => ['User-Agent' => UserAgent::random()]
         ]);
         $pylesos = new \App\Library\Pylesos();
 //        $client->request('GET', '/', ['proxy' => 'tcp://localhost:8125']);
-        $rotator = new \App\Library\Rotator('google.com');
+        $rotator = new \App\Library\ProxyRotator('google.com');
 
         $this->assertEquals($pylesos->download($url, $rotator, $client), 'Success response');
     }
