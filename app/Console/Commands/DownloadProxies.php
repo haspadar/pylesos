@@ -49,8 +49,10 @@ class DownloadProxies extends Command
             'timeout' => 5,
             'headers' => ['User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148']
         ]));
+        $addedCount = 0;
+        $updatedCount = 0;
         foreach ($proxies as $proxy) {
-            if (!app('db')
+            if (app('db')
                 ->table('proxies')
                 ->where('address', $proxy->getAddress())
                 ->update([
@@ -59,6 +61,8 @@ class DownloadProxies extends Command
                     'updated_at' => Carbon::now('Europe/Minsk')->toDateTimeString()
                 ])
             ) {
+                $updatedCount++;
+            } else {
                 app('db')
                     ->table('proxies')
                     ->insert([
@@ -66,8 +70,11 @@ class DownloadProxies extends Command
                         'protocol' => $proxy->getProtocol(),
                         'created_at' => Carbon::now('Europe/Minsk')->toDateTimeString()
                     ]);
+                $addedCount++;
             }
         }
+
+        $this->info(sprintf('Added %d new proxies, updated %d proxies', $addedCount, $updatedCount));
 
         return 0;
     }

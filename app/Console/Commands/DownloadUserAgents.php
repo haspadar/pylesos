@@ -50,8 +50,10 @@ class DownloadUserAgents extends Command
             'timeout' => 5,
             'headers' => ['User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148']
         ]));
+        $addedCount = 0;
+        $updatedCount = 0;
         foreach ($userAgents as $userAgent) {
-            if (!app('db')
+            if (app('db')
                 ->table('user_agents')
                 ->where('address', $userAgent)
                 ->update([
@@ -59,6 +61,8 @@ class DownloadUserAgents extends Command
                     'updated_at' => Carbon::now('Europe/Minsk')->toDateTimeString()
                 ])
             ) {
+                $updatedCount++;
+            } else {
                 app('db')
                     ->table('user_agents')
                     ->insert([
@@ -66,8 +70,11 @@ class DownloadUserAgents extends Command
                         'is_mobile' => mb_strpos($userAgent, 'Mobile') !== false,
                         'created_at' => Carbon::now('Europe/Minsk')->toDateTimeString()
                     ]);
+                $addedCount++;
             }
         }
+
+        $this->info(sprintf('Added %d new User-Agents, updated %d User-Agents', $addedCount, $updatedCount));
 
         return 0;
     }
