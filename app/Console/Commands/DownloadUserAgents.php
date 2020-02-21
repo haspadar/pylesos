@@ -51,12 +51,22 @@ class DownloadUserAgents extends Command
             'headers' => ['User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148']
         ]));
         foreach ($userAgents as $userAgent) {
-            var_dump($userAgent);
-            app('db')->insert('insert into user_agents (user_agent, is_mobile, created_at) values (?, ?, ?)', [
-                $userAgent,
-                mb_strpos($userAgent, 'Mobile') !== false,
-                Carbon::now('Europe/Minsk')->toDateTimeString()
-            ]);
+            if (!app('db')
+                ->table('user_agents')
+                ->where('address', $userAgent)
+                ->update([
+                    'user_agent' => $userAgent,
+                    'updated_at' => Carbon::now('Europe/Minsk')->toDateTimeString()
+                ])
+            ) {
+                app('db')
+                    ->table('user_agents')
+                    ->insert([
+                        'user_agent' => $userAgent,
+                        'is_mobile' => mb_strpos($userAgent, 'Mobile') !== false,
+                        'created_at' => Carbon::now('Europe/Minsk')->toDateTimeString()
+                    ]);
+            }
         }
 
         return 0;

@@ -50,11 +50,23 @@ class DownloadProxies extends Command
             'headers' => ['User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148']
         ]));
         foreach ($proxies as $proxy) {
-            app('db')->insert('insert into proxies (address, protocol, created_at) values (?, ?, ?)', [
-                $proxy->getAddress(),
-                $proxy->getProtocol(),
-                Carbon::now('Europe/Minsk')->toDateTimeString()
-            ]);
+            if (!app('db')
+                ->table('proxies')
+                ->where('address', $proxy->getAddress())
+                ->update([
+                    'address' => $proxy->getAddress(),
+                    'protocol' => $proxy->getProtocol(),
+                    'updated_at' => Carbon::now('Europe/Minsk')->toDateTimeString()
+                ])
+            ) {
+                app('db')
+                    ->table('proxies')
+                    ->insert([
+                        'address' => $proxy->getAddress(),
+                        'protocol' => $proxy->getProtocol(),
+                        'created_at' => Carbon::now('Europe/Minsk')->toDateTimeString()
+                    ]);
+            }
         }
 
         return 0;

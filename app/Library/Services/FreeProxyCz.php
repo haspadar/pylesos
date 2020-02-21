@@ -10,9 +10,9 @@ class FreeProxyCz extends SiteWithProxies
 {
     protected string $domain = 'http://free-proxy.cz';
 
-    protected string $firstPageUrl = '/en/proxylist/country/all/https/ping/level1';
+    protected string $firstPageUrl = '/en/proxylist/country/all/all/ping/level1';
 
-    protected string $nextPageUrlPattern = '/en/proxylist/country/all/https/ping/level1/%s';
+    protected string $nextPageUrlPattern = '/en/proxylist/country/all/all/ping/level1/%s';
 
     public function __construct($pagesCount = 5)
     {
