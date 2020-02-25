@@ -3,6 +3,7 @@ namespace App\Library\Services;
 
 use App\Library\Proxy;
 use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
 use Illuminate\Validation\Validator;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -20,11 +21,12 @@ class FreeProxyCz extends SiteWithProxies
     }
 
     /**
-     * @param Client $client
+     * @param HandlerStack $handlerStack
      * @return Proxy[]
      */
-    public function downloadProxies(Client $client): array
+    public function downloadProxies(HandlerStack $handlerStack = null): array
     {
+        $client = new Client(['handler' => $handlerStack]);
         $proxies = $this->downloadSite($client);
         usort($proxies, function (Proxy $previous, Proxy $next) {
             if ($previous->getAddress() > $next->getAddress()) {

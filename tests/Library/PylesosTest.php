@@ -36,7 +36,9 @@ class DownloadPageTest extends TestCase
         ]);
         $pylesos = new \App\Library\Pylesos();
 //        $client->request('GET', '/', ['proxy' => 'tcp://localhost:8125']);
-        $rotator = new \App\Library\ProxyRotator('google.com');
+//        $proxyRotator = new \App\Library\ProxyRotator('google.com');
+//        $userAgentRotator = new \App\Library\UserAgentRotator('google.com');
+        $pylesos->download('google.com', $handlerStack);
 
         $this->assertEquals($pylesos->download($url, $rotator, $client), 'Success response');
     }

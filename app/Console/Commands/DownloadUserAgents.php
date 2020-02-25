@@ -42,14 +42,7 @@ class DownloadUserAgents extends Command
      */
     public function handle(SiteWithUserAgents $site)
     {
-        $userAgents = $site->downloadUserAgents(new Client([
-            'curl' => [
-                CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2
-//                CURLOPT_PROXY => 'proxyip:58080'
-            ],
-            'timeout' => 5,
-            'headers' => ['User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148']
-        ]));
+        $userAgents = $site->downloadUserAgents();
         $addedCount = 0;
         $updatedCount = 0;
         foreach ($userAgents as $userAgent) {

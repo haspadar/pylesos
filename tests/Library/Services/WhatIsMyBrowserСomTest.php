@@ -32,8 +32,7 @@ class WhatIsMyBrowserСomTest extends TestCase
             new Response(200, [], file_get_contents($responsesDirectory . '/page2.html')),
         ]);
         $handlerStack = HandlerStack::create($mock);
-        $client = new Client(['handler' => $handlerStack]);
-        $userAgents = $userAgentsSource->downloadUserAgents($client);
+        $userAgents = $userAgentsSource->downloadUserAgents($handlerStack);
         $this->assertEquals([
             'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36 Edge/15.15063',

@@ -32,8 +32,7 @@ class FreeProxyCzTest extends TestCase
             new Response(200, [], file_get_contents($responsesDirectory . '/page2.html')),
         ]);
         $handlerStack = HandlerStack::create($mock);
-        $client = new Client(['handler' => $handlerStack]);
-        $proxies = $proxiesSource->downloadProxies($client);
+        $proxies = $proxiesSource->downloadProxies($handlerStack);
         $this->assertEquals([
             new \App\Library\Proxy('1.1.1.1:8080', 'https'),
             new \App\Library\Proxy('1.1.1.2:3128', 'https'),

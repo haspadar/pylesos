@@ -1,9 +1,9 @@
 <?php
 namespace App\Library\Services\Contracts;
 
-use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
 
 interface UserAgentsSourceInterface
 {
-    public function downloadUserAgents(Client $client): array;
+    public function downloadUserAgents(HandlerStack $handlerStack = null): array;
 }

@@ -4,6 +4,7 @@ namespace App\Library\Services;
 use App\Library\Proxy;
 use App\Library\UserAgent;
 use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
 use Illuminate\Validation\Validator;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -22,8 +23,10 @@ class WhatIsMyBrowserCom extends SiteWithUserAgents
         parent::__construct($pagesCount);
     }
 
-    public function downloadUserAgents(Client $client): array
+    public function downloadUserAgents(HandlerStack $handlerStack = null): array
     {
+        $client = new \GuzzleHttp\Client(['handler' => $handlerStack]);
+
         return $this->downloadSite($client);
     }
 

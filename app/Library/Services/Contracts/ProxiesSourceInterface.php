@@ -1,9 +1,9 @@
 <?php
 namespace App\Library\Services\Contracts;
 
-use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
 
 interface ProxiesSourceInterface
 {
-    public function downloadProxies(Client $client): array;
+    public function downloadProxies(HandlerStack $handlerStack = null): array;
 }
