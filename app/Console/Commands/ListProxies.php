@@ -38,6 +38,5 @@ class ListProxies extends Command
     public function handle()
     {
         $site = $this->argument('site');
-        var_dump($site);
     }
 }

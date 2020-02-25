@@ -1,17 +1,15 @@
 <?php
+
 namespace App\Library;
 
-use App\Library\Pylesos\BanException;
-use App\Library\Pylesos\Exception;
-use App\Library\Pylesos\NotFoundException;
+use App\Library\Motor\BanException;
+use App\Library\Motor\NotFoundException;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ServerException;
-use GuzzleHttp\HandlerStack;
-use Psr\Http\Message\ResponseInterface;
 
 class Pylesos
 {
+    const TIMEOUT = 5;
+
     /**
      * @var ProxyRotator
      */
@@ -23,42 +21,50 @@ class Pylesos
     private UserAgentRotator $userAgentRotator;
 
     /**
-     * @var Client
+     * @var Motor
      */
-    private Client $client;
+    private Motor $motor;
 
     /**
-     * @var ResponseInterface
+     * @var Client
      */
-    private ResponseInterface $response;
+    private $client;
 
-    public function download(string $url, HandlerStack $handlerStack = null): string
+    private $isCacheEnabled = true;
+
+    private $notFoundRotatesCount = 20;
+
+    private $banRotatesCount = 20;
+
+    public function __construct(Site $site, Motor $motor) {
+        $this->setProxyRotator(new ProxyRotator($site));
+        $this->setUserAgentRotator(new UserAgentRotator($site));
+        $this->setMotor($motor);
+    }
+
+    public function download(string $url): string
     {
-        if ($cache = $this->getCache($url)) {
-           return $cache;
+        if ($this->isCacheEnabled() && $cache = $this->getCache($url)) {
+            return $cache;
         }
 
-        $this->proxyRotator = new ProxyRotator($url);
-        $this->userAgentRotator = new UserAgentRotator($url);
-        $this->client = new \GuzzleHttp\Client([
-            'handler' => $handlerStack,
-            'curl' => [
-                CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
-                CURLOPT_PROXY => $this->proxyRotator->getLiveProxy()
-            ],
-            'timeout' => 5,
-            'headers' => ['User-Agent' => $this->userAgentRotator->getLiveUserAgent()]
-        ]);
+        if ($this->proxyRotator->getProxiesCount()) {
+            $response = $this->rotateDownload($url);
+        } else {
+            $this->client = $this->generateClient();
+            $response = $this->motor->download($url, $this->client);
+        }
 
-        $response = $this->checkForExceptionsResponse($url);
-        $this->addCache($url, $response);
+        if ($this->isCacheEnabled()) {
+            $this->addCache($url, $response);
+        }
 
         return $response;
     }
 
-    public function getResponse(): ?ResponseInterface
+    public function getClient(): ?Client
     {
-        return $this->response;
+        return $this->client;
     }
 
     public function getUserAgentRotator(): ?UserAgentRotator
@@ -71,64 +77,39 @@ class Pylesos
         return $this->proxyRotator;
     }
 
-    public function getClient(): ?Client
+    public function isCacheEnabled(): bool
     {
-        return $this->client;
+        return $this->isCacheEnabled;
     }
 
-    private function hasBannedText(string $content): bool
+    public function disableCache(): void
     {
-        $patterns = ['IP', 'Banned'];
-        $lowerWords = explode(' ', strtolower($content));
-        foreach ($patterns as $pattern) {
-            if (in_array(strtolower($pattern), $lowerWords)) {
-                return true;
-            }
-        }
-
-        return false;
+        $this->isCacheEnabled = false;
     }
 
-    /**
-     * @param string $url
-     * @return string
-     * @throws BanException
-     * @throws Exception
-     * @throws NotFoundException
-     */
-    private function checkForExceptionsResponse(string $url): string
+    public function setBanRotatesCount(int $count): void
     {
-        try {
-            $this->response = $this->client
-                ->request('get', $url, [
-                    'connect_timeout' => 5
-                ]);
-        } catch (ClientException $e) {
-            if ($e->getCode() == 404) {
-                throw new NotFoundException($e->getMessage(), $e->getCode());
-            }
+        $this->banRotatesCount = $count;
+    }
 
-            if (intval($e->getCode() / 100) == 4) {
-                throw new BanException($e->getMessage(), $e->getCode());
-            }
+    public function setNoFoundRotatesCount(int $count): void
+    {
+        $this->notFoundRotatesCount = $count;
+    }
 
-            throw new Exception($e->getMessage(), $e->getCode());
-        } catch (\Exception $e) {
-            throw new Exception($e->getMessage(), $e->getCode());
-        }
+    private function setMotor(Motor $motorMock): void
+    {
+        $this->motor = $motorMock;
+    }
 
-        $content = $this->response
-            ->getBody()
-            ->getContents();
-        if ($this->hasBannedText($content)) {
-            throw new BanException('Content has banned text: ' . $content, $this->response->getStatusCode());
-        }
+    private  function setProxyRotator(ProxyRotator $proxyRotator): void
+    {
+        $this->proxyRotator = $proxyRotator;
+    }
 
-        if (!$content) {
-            throw new NotFoundException('No content: ' . $content, $this->response->getStatusCode());
-        }
-
-        return $content;
+    private  function setUserAgentRotator(UserAgentRotator $userAgentRotator): void
+    {
+        $this->userAgentRotator = $userAgentRotator;
     }
 
     private function addCache(string $url, string $response): void
@@ -140,12 +121,68 @@ class Pylesos
         ]);
     }
 
-    private function getCache(string $url): string
+    private  function getCache(string $url): string
     {
         $found = \DB::select('SELECT * FROM cache WHERE url = :url', [
             'url' => $url
         ]);
 
         return $found ? $found[0]->response : '';
+    }
+
+    /**
+     * @return int
+     */
+    private function getNotFoundRotatesCount(): int
+    {
+        return $this->notFoundRotatesCount;
+    }
+
+    /**
+     * @return int
+     */
+    private function getBanRotatesCount(): int
+    {
+        return $this->banRotatesCount;
+    }
+
+    private function rotateDownload(string $url, int $notFoundCounter = 0, int $banCounter = 0)
+    {
+        if ($notFoundCounter == $this->getNotFoundRotatesCount()) {
+            throw new NotFoundException(sprintf('After %d attempts', $notFoundCounter));
+        }
+
+        if ($banCounter == $this->getBanRotatesCount()) {
+            throw new BanException('After %d attempts', $banCounter);
+        }
+
+        try {
+            $proxy = $this->proxyRotator->getLiveProxy();
+            $this->client = $this->generateClient($proxy);
+
+            return $this->motor->download($url, $this->client);
+        } catch (NotFoundException $e) {
+            $this->proxyRotator->blockProxy();
+            $this->userAgentRotator->blockUserAgent();
+
+            return $this->rotateDownload($url, $notFoundCounter + 1, $banCounter);
+        } catch (BanException $e) {
+            $this->proxyRotator->blockProxy();
+            $this->userAgentRotator->blockUserAgent();
+
+            return $this->rotateDownload($url, $notFoundCounter, $banCounter + 1);
+        }
+    }
+
+    private function generateClient(Proxy $proxy = null): \GuzzleHttp\Client
+    {
+        return new \GuzzleHttp\Client([
+            'curl' => [
+                CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
+                CURLOPT_PROXY => $proxy ? $proxy->getAddress() : ''
+            ],
+            'timeout' => self::TIMEOUT,
+            'headers' => ['User-Agent' => $this->userAgentRotator->getLiveUserAgent()]
+        ]);
     }
 }

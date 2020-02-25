@@ -1,5 +1,5 @@
 <?php
-namespace App\Library\Pylesos;
+namespace App\Library\Motor;
 
 class Exception extends \Exception
 {

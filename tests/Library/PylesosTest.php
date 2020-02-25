@@ -2,117 +2,71 @@
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
-class DownloadPageTest extends TestCase
+class PylesosTest extends TestCase
 {
     use DatabaseMigrations;
 
     const URL = 'https://google.com';
 
+    const DOMAIN = 'google.com';
+
     const SUCCESS_RESPONSE = 'Success';
 
-    public function testSuccessDownload()
+    public function setUp(): void
     {
-        $handlerStack = \GuzzleHttp\HandlerStack::create(
-            new \GuzzleHttp\Handler\MockHandler([
-                new \GuzzleHttp\Psr7\Response(200, [], self::SUCCESS_RESPONSE),
-            ])
-        );
-        $pylesos = new \App\Library\Pylesos();
+        parent::setUp();
+        DB::insert('insert into sites (id, url, domain) values (?, ?, ?)', [1, self::URL, self::DOMAIN]);
+        DB::insert('insert into proxies (id, address, protocol) values (?, ?, ?)', [1, ProxyRotatorTest::PROXIES[0][0], ProxyRotatorTest::PROXIES[0][1]]);
+        DB::insert('insert into sites_proxies (site_id, proxy_id) values (?, ?)', [1, 1]);
+        DB::insert('insert into proxies (id, address, protocol) values (?, ?, ?)', [2, ProxyRotatorTest::PROXIES[1][0], ProxyRotatorTest::PROXIES[1][1]]);
+        DB::insert('insert into sites_proxies (site_id, proxy_id) values (?, ?)', [1, 2]);
+
+        DB::insert('insert into users_agents (id, user_agent) values (?, ?)', [1, UserAgentRotatorTest::USERS_AGENTS[0]]);
+        DB::insert('insert into sites_users_agents (site_id, user_agent_id) values (?, ?)', [1, 1]);
+        DB::insert('insert into users_agents (id, user_agent) values (?, ?)', [2, UserAgentRotatorTest::USERS_AGENTS[1]]);
+        DB::insert('insert into sites_users_agents (site_id, user_agent_id) values (?, ?)', [1, 2]);
+    }
+
+    public function testProxyRotation()
+    {
+        $motorMock = $this->createMock(\App\Library\Motor::class);
+        $motorMock->method('download')
+            ->will($this->onConsecutiveCalls(
+                $this->throwException(new \App\Library\Motor\NotFoundException()),
+                self::SUCCESS_RESPONSE,
+            ));
+        $site = new \App\Library\Site(self::URL);
+        $pylesos = new \App\Library\Pylesos($site, $motorMock);
+        $pylesos->setNoFoundRotatesCount(2);
+        $pylesos->disableCache();
+        $this->assertTrue(true);
+        $response = $pylesos->download(self::URL);
+        $this->assertEquals($response, self::SUCCESS_RESPONSE);
         $this->assertEquals(
-            $pylesos->download(self::URL, $handlerStack),
-            self::SUCCESS_RESPONSE
+            $pylesos->getClient()->getConfig()['curl'][CURLOPT_PROXY],
+            ProxyRotatorTest::PROXIES[1][0]
         );
-    }
-
-    public function testNotFoundCode()
-    {
-        $handlerStack = \GuzzleHttp\HandlerStack::create(
-            new \GuzzleHttp\Handler\MockHandler([
-                new \GuzzleHttp\Psr7\Response(404, [], 'Not Found'),
-            ])
+        $this->assertEquals(
+            $pylesos->getClient()->getConfig()['headers']['User-Agent'],
+            UserAgentRotatorTest::USERS_AGENTS[1]
         );
-        $pylesos = new \App\Library\Pylesos();
-        $this->expectException(\App\Library\Pylesos\NotFoundException::class);
-        $pylesos->download(self::URL, $handlerStack);
-    }
-
-    public function testNoContent()
-    {
-        $handlerStack = \GuzzleHttp\HandlerStack::create(
-            new \GuzzleHttp\Handler\MockHandler([
-                new \GuzzleHttp\Psr7\Response(200, ['Content-Length' => 0]),
-            ])
-        );
-        $pylesos = new \App\Library\Pylesos();
-        $this->expectException(\App\Library\Pylesos\NotFoundException::class);
-        $pylesos->download(self::URL, $handlerStack);
-    }
-
-    public function testBanCode()
-    {
-        $handlerStack = \GuzzleHttp\HandlerStack::create(
-            new \GuzzleHttp\Handler\MockHandler([
-                new \GuzzleHttp\Psr7\Response(451, [], 'Unavailable For Legal Reasons'),
-            ])
-        );
-        $pylesos = new \App\Library\Pylesos();
-        $this->expectException(\App\Library\Pylesos\BanException::class);
-        $pylesos->download(self::URL, $handlerStack);
-    }
-
-    public function testBanContent()
-    {
-        $mock = new \GuzzleHttp\Handler\MockHandler([
-            new \GuzzleHttp\Psr7\Response(200, [], 'Vash ip ohuel'),
-        ]);
-        $handlerStack = \GuzzleHttp\HandlerStack::create($mock);
-        $pylesos = new \App\Library\Pylesos();
-        $this->expectException(\App\Library\Pylesos\BanException::class);
-        $pylesos->download(self::URL, $handlerStack);
-    }
-
-    public function testServerError()
-    {
-        $handlerStack = \GuzzleHttp\HandlerStack::create(
-            new \GuzzleHttp\Handler\MockHandler([
-                new \GuzzleHttp\Psr7\Response(504, [])
-            ])
-        );
-        $pylesos = new \App\Library\Pylesos();
-        $this->expectException(\App\Library\Pylesos\Exception::class);
-        $pylesos->download(self::URL, $handlerStack);
-    }
-
-    public function testRequestExceptionRequest()
-    {
-        $mock = new \GuzzleHttp\Handler\MockHandler([
-            new \GuzzleHttp\Exception\RequestException(
-                'Error Communicating with Server',
-                new \GuzzleHttp\Psr7\Request('GET', self::URL)
-            ),
-        ]);
-        $handlerStack = \GuzzleHttp\HandlerStack::create($mock);
-        $pylesos = new \App\Library\Pylesos();
-        $this->expectException(\App\Library\Pylesos\Exception::class);
-        $pylesos->download(self::URL, $handlerStack);
     }
 
     public function testCache()
     {
-        $handlerStack = \GuzzleHttp\HandlerStack::create(
-            new \GuzzleHttp\Handler\MockHandler([
-                new \GuzzleHttp\Psr7\Response(200, [], self::SUCCESS_RESPONSE),
-                new \GuzzleHttp\Psr7\Response(404, [], 'Not Found'),
-            ])
-        );
-        $pylesos = new \App\Library\Pylesos();
-        $this->assertEquals(
-            $pylesos->download(self::URL, $handlerStack),
-            self::SUCCESS_RESPONSE
-        );
-        $this->assertEquals(
-            $pylesos->download(self::URL, $handlerStack),
-            self::SUCCESS_RESPONSE
-        );
+        $motorMock = $this->createMock(\App\Library\Motor::class);
+        $motorMock->method('download')
+            ->will($this->onConsecutiveCalls(
+                self::SUCCESS_RESPONSE,
+                new \App\Library\Motor\NotFoundException(),
+                '',
+            ));
+        $pylesos = new \App\Library\Pylesos(new \App\Library\Site(self::URL), $motorMock);
+        for ($attemptId = 0; $attemptId < 3; $attemptId++) {
+            $this->assertEquals(
+                $pylesos->download(self::URL),
+                self::SUCCESS_RESPONSE
+            );
+        }
     }
 }

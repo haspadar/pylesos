@@ -6,7 +6,9 @@ class ProxyRotatorTest extends TestCase
 {
     use DatabaseMigrations;
 
-    private $proxies = [
+    const URL = 'http://google.com';
+
+    const PROXIES = [
         ['1.1.1.1:80', 'https'],
         ['2.2.2.2:8080', 'https'],
         ['3.3.3.3:3128', 'https']
@@ -17,7 +19,7 @@ class ProxyRotatorTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        foreach ($this->proxies as list($proxy, $protocol)) {
+        foreach (self::PROXIES as list($proxy, $protocol)) {
             DB::insert('insert into proxies (address, protocol) values (?, ?)', [$proxy, $protocol]);
         }
     }
@@ -29,21 +31,21 @@ class ProxyRotatorTest extends TestCase
      */
     public function testNext()
     {
-        $rotator = new \App\Library\ProxyRotator('http://google.com');
-        $this->assertEquals($rotator->getLiveProxy()->getAddress(), $this->proxies[0][0]);
-        $this->assertEquals($rotator->getProxiesCount(), count($this->proxies));
-        $rotator->blockProxy($rotator->getLiveProxy());
-        $this->assertEquals($rotator->getLiveProxy()->getAddress(), $this->proxies[1][0]);
-        $this->assertEquals($rotator->getProxiesCount(), count($this->proxies) - 1);
+        $rotator = new \App\Library\ProxyRotator(new \App\Library\Site(self::URL));
+        $this->assertEquals($rotator->getLiveProxy()->getAddress(), self::PROXIES[0][0]);
+        $this->assertEquals($rotator->getProxiesCount(), count(self::PROXIES));
+        $rotator->blockProxy();
+        $this->assertEquals($rotator->getLiveProxy()->getAddress(), self::PROXIES[1][0]);
+        $this->assertEquals($rotator->getProxiesCount(), count(self::PROXIES) - 1);
     }
 
     public function testCircle()
     {
-        $rotator = new \App\Library\ProxyRotator('http://google.com');
-        $rotator->blockProxy($rotator->getLiveProxy());
-        $rotator->blockProxy($rotator->getLiveProxy());
-        $rotator->blockProxy($rotator->getLiveProxy());
-        $this->assertEquals($rotator->getLiveProxy()->getAddress(), $this->proxies[0][0]);
-        $this->assertEquals($rotator->getProxiesCount(), count($this->proxies));
+        $rotator = new \App\Library\ProxyRotator(new \App\Library\Site(self::URL));
+        $rotator->blockProxy();
+        $rotator->blockProxy();
+        $rotator->blockProxy();
+        $this->assertEquals($rotator->getLiveProxy()->getAddress(), self::PROXIES[0][0]);
+        $this->assertEquals($rotator->getProxiesCount(), count(self::PROXIES));
     }
 }

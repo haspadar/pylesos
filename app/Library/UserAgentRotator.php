@@ -7,14 +7,14 @@ class UserAgentRotator
 
     private string $liveUserAgent;
 
-    public function __construct(string $url)
+    public function __construct(Site $site)
     {
-        $this->site = new Site($url);
+        $this->site = $site;
         if (!$this->hasSiteUsersAgents()) {
             $this->addSiteUsersAgents();
         }
 
-        $this->liveUserAgent = $this->getFirstSiteUserAgent();
+        $this->setLiveUserAgent($this->getFirstSiteUserAgent());
     }
 
     public function getLiveUserAgent(): string
@@ -29,20 +29,37 @@ class UserAgentRotator
         ])[0]->count;
     }
 
-    public function blockUserAgent(string $userAgent): bool
+    public function blockUserAgent(): void
     {
-        $userAgentId = \DB::table('users_agents')->where('user_agent', $userAgent)->get()[0]->id;
-        $isBlocked = \DB::table('sites_users_agents')
-            ->where('site_id', $this->site->getId())
-            ->where('user_agent_id', $userAgentId)
-            ->delete();
-        if (!$this->hasSiteUsersAgents()) {
-            $this->addSiteUsersAgents();
+        if ($this->liveUserAgent) {
+            $userAgentId = \DB::table('users_agents')->where('user_agent', $this->liveUserAgent)->get()[0]->id;
+            \DB::table('sites_users_agents')
+                ->where('site_id', $this->site->getId())
+                ->where('user_agent_id', $userAgentId)
+                ->delete();
+            if (!$this->hasSiteUsersAgents()) {
+                $this->addSiteUsersAgents();
+            }
+
+            $this->setLiveUserAgent($this->getFirstSiteUserAgent());
+        }
+    }
+
+    public function getFirstSiteUserAgent(): string
+    {
+        $foundAll = \DB::select('SELECT * FROM sites_users_agents WHERE site_id = ?', [$this->site->getId()]);
+        if ($foundAll) {
+            $userAgents = \DB::select('SELECT * FROM users_agents WHERE id = ?', [$foundAll[0]->user_agent_id]);
+
+            return $userAgents[0]->user_agent;
         }
 
-        $this->liveUserAgent = $this->getFirstSiteUserAgent();
+        return '';
+    }
 
-        return $isBlocked;
+    private function setLiveUserAgent(string $userAgent): void
+    {
+        $this->liveUserAgent = $userAgent;
     }
 
     private function getSite($url): Site
@@ -65,17 +82,5 @@ class UserAgentRotator
                 $userAgent->id
             ]);
         }
-    }
-
-    private function getFirstSiteUserAgent(): string
-    {
-        $foundAll = \DB::select('SELECT * FROM sites_users_agents WHERE site_id = ?', [$this->site->getId()]);
-        if ($foundAll) {
-            $userAgents = \DB::select('SELECT * FROM users_agents WHERE id = ?', [$foundAll[0]->user_agent_id]);
-
-            return $userAgents[0]->user_agent;
-        }
-
-        return '';
     }
 }

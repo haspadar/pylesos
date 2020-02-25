@@ -2,7 +2,10 @@
 
 namespace App\Library\Services;
 
+use App\Library\Motor;
 use App\Library\Proxy;
+use App\Library\Pylesos;
+use App\Library\Site;
 use GuzzleHttp\Client;
 
 trait SiteParserTrait
@@ -52,6 +55,10 @@ trait SiteParserTrait
 
     protected function downloadPage(string $url): string
     {
+//        $pylesos = new Pylesos(new Site($this->domain . $url), new Motor());
+//
+//        return $pylesos->download($this->domain . $url);
+//
         return $this->client
             ->request('get', $this->domain . $url, [
                 'connect_timeout' => $this->connectTimeout
