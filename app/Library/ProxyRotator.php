@@ -5,7 +5,7 @@ class ProxyRotator
 {
     private Site $site;
 
-    private Proxy $liveProxy;
+    private ?Proxy $liveProxy;
 
     public function __construct(string $url)
     {
@@ -17,7 +17,7 @@ class ProxyRotator
         $this->liveProxy = $this->getFirstSiteProxy();
     }
 
-    public function getLiveProxy(): Proxy
+    public function getLiveProxy(): ?Proxy
     {
         return $this->liveProxy;
     }
@@ -66,7 +66,7 @@ class ProxyRotator
         }
     }
 
-    private function getFirstSiteProxy(): Proxy
+    private function getFirstSiteProxy(): ?Proxy
     {
         $foundAll = \DB::select('SELECT * FROM sites_proxies WHERE site_id = ?', [$this->site->getId()]);
         if ($foundAll) {
