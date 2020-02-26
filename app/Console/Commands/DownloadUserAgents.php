@@ -2,10 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Library\Services\SiteWithProxies;
 use App\Library\Services\SiteWithUserAgents;
 use Carbon\Carbon;
-use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
 class DownloadUserAgents extends Command

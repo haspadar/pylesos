@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Library\Services\FreeProxyCz;
+use App\Library\Services\GetProxyListCom;
+use App\Library\Services\ProxyListDownload;
 use Illuminate\Support\ServiceProvider;
 
 class DownloadProxiesProvider extends ServiceProvider
