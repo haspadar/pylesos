@@ -80,8 +80,9 @@ $app->singleton(
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
-$app->register(\App\Providers\DownloadProxiesProvider::class);
-$app->register(\App\Providers\DownloadUserAgentsProvider::class);
+$app->register(\App\Providers\ProxiesSitesListServiceProvider::class);
+$app->register(\App\Providers\SiteWithProxiesServiceProvider::class);
+$app->register(\App\Providers\SiteWithUserAgentsServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

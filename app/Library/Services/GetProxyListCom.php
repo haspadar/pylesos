@@ -38,7 +38,12 @@ class GetProxyListCom extends SiteWithProxies
     protected function parsePage(string $page): array
     {
         $json = json_decode($page);
+        if (isset($json->ip)) {
+            return [new Proxy($json->ip . ':' . ($json->port ?? 80), 'http')];
+        } else {
+            $this->pagesCount = 0;
+        }
 
-        return [new Proxy($json->ip . ':' . $json->port, $json->protocol)];
+        return [];
     }
 }

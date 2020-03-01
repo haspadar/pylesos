@@ -3,9 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Library\Domain;
-use App\Library\Services\FreeProxyCz;
-use App\Library\Services\GetProxyListCom;
-use App\Library\Services\ProxyListDownload;
+use App\Library\Services\ProxiesSitesList;
 use App\Library\Services\SiteWithProxies;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -26,26 +24,12 @@ class DownloadProxies extends Command
      */
     protected $description = 'Download proxies from site';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function handle(ProxiesSitesList $sitesList): int
     {
-        parent::__construct();
-    }
-
-
-    public function handle(
-        FreeProxyCz $freeProxyCz,
-        ProxyListDownload $proxyListDownload,
-        GetProxyListCom $getProxyListCom
-    ) {
         /**
          * @var $site SiteWithProxies
          */
-        foreach ([$freeProxyCz, $proxyListDownload, $getProxyListCom] as $site) {
+        foreach ($sitesList->getSites() as $site) {
             $domain = new Domain($site->getDomain());
             try {
                 $this->info(sprintf('Site %s parsing started', $domain));
@@ -73,7 +57,6 @@ class DownloadProxies extends Command
                         $addedCount++;
                     }
                 }
-
                 $this->info(sprintf(
                     'Added %d new proxies, updated %d proxies from %s',
                     $addedCount,

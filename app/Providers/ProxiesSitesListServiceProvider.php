@@ -2,11 +2,10 @@
 
 namespace App\Providers;
 
-use App\Library\Services\FreeProxyCz;
-use App\Library\Services\WhatIsMyBrowserCom;
+use App\Library\Services\EnvProxiesSitesList;
 use Illuminate\Support\ServiceProvider;
 
-class DownloadUserAgentsProvider extends ServiceProvider
+class ProxiesSitesListServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
@@ -25,8 +24,8 @@ class DownloadUserAgentsProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('App\Library\Services\SiteWithUserAgents', function ($app) {
-            return new WhatIsMyBrowserCom();
+        $this->app->bind('App\Library\Services\ProxiesSitesList', function ($app) {
+            return new EnvProxiesSitesList();
         });
     }
 }

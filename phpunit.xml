@@ -24,5 +24,6 @@
         <env name="DB_DATABASE" value=":memory:"/>
         <env name="CACHE_DRIVER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="PROXIES_SITES" value="FreeProxyCz"/>
     </php>
 </phpunit>
