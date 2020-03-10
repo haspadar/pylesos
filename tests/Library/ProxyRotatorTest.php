@@ -1,5 +1,7 @@
 <?php
 
+use App\Library\ProxyRotator;
+use App\Library\Site;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
 class ProxyRotatorTest extends TestCase
@@ -9,9 +11,8 @@ class ProxyRotatorTest extends TestCase
     const URL = 'http://google.com';
 
     const PROXIES = [
-        ['1.1.1.1:80', 'https'],
-        ['2.2.2.2:8080', 'https'],
-        ['3.3.3.3:3128', 'https']
+        '1.1.1.1:80',
+        '2.2.2.2:8080',
     ];
 
     private $domain = 'google.com';
@@ -19,8 +20,8 @@ class ProxyRotatorTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        foreach (self::PROXIES as list($proxy, $protocol)) {
-            DB::insert('insert into proxies (address, protocol) values (?, ?)', [$proxy, $protocol]);
+        foreach (self::PROXIES as $proxy) {
+            DB::insert('insert into proxies (address, protocol) values (?, ?)', [$proxy, 'http']);
         }
     }
 
@@ -29,23 +30,21 @@ class ProxyRotatorTest extends TestCase
      *
      * @return void
      */
-    public function testNext()
+    public function testRotation()
     {
-        $rotator = new \App\Library\ProxyRotator(new \App\Library\Site(self::URL));
-        $this->assertEquals($rotator->getLiveProxy()->getAddress(), self::PROXIES[0][0]);
-        $this->assertEquals($rotator->getProxiesCount(), count(self::PROXIES));
-        $rotator->blockProxy();
-        $this->assertEquals($rotator->getLiveProxy()->getAddress(), self::PROXIES[1][0]);
-        $this->assertEquals($rotator->getProxiesCount(), count(self::PROXIES) - 1);
-    }
+        $site = new Site(self::URL);
+        $rotator = new ProxyRotator(ProxyRotator::findLiveProxies($site->getId()));
+        $this->assertEquals($rotator->getRow()->getAddress(), '');
+        $this->assertEquals($rotator->getRowsCount(), count(self::PROXIES) + 1);
+        $rotator->skip();
+        $randomProxies = self::PROXIES;
 
-    public function testCircle()
-    {
-        $rotator = new \App\Library\ProxyRotator(new \App\Library\Site(self::URL));
-        $rotator->blockProxy();
-        $rotator->blockProxy();
-        $rotator->blockProxy();
-        $this->assertEquals($rotator->getLiveProxy()->getAddress(), self::PROXIES[0][0]);
-        $this->assertEquals($rotator->getProxiesCount(), count(self::PROXIES));
+        $this->assertEquals($rotator->getRowsCount(), count($randomProxies));
+        $rotator->skip();
+        $this->assertTrue(in_array($rotator->getRow()->getAddress(), $randomProxies));
+        unset($randomProxies[array_search($rotator->getRow()->getAddress(), $randomProxies)]);
+        $this->assertEquals($rotator->getRowsCount(), count($randomProxies));
+        $rotator->skip();
+        $this->assertNull($rotator->getRow());
     }
 }

@@ -26,46 +26,52 @@ class DownloadProxies extends Command
 
     public function handle(ProxiesSitesList $sitesList): int
     {
-        /**
-         * @var $site SiteWithProxies
-         */
-        foreach ($sitesList->getSites() as $site) {
-            $domain = new Domain($site->getDomain());
-            try {
-                $this->info(sprintf('Site %s parsing started', $domain));
-                $proxies = $site->downloadProxies();
-                $addedCount = 0;
-                $updatedCount = 0;
-                foreach ($proxies as $proxy) {
-                    if (app('db')
-                        ->table('proxies')
-                        ->where('address', $proxy->getAddress())
-                        ->update([
-                            'updated_at' => Carbon::now('Europe/Minsk')->toDateTimeString()
-                        ])
-                    ) {
-                        $updatedCount++;
-                    } else {
-                        app('db')
+        $sites = $sitesList->getSites();
+        if ($sites) {
+            /**
+             * @var $site SiteWithProxies
+             */
+            foreach ($sitesList->getSites() as $site) {
+                $domain = new Domain($site->getDomain());
+                try {
+                    $this->info(sprintf('Site %s parsing started', $domain));
+                    $proxies = $site->downloadProxies();
+                    $addedCount = 0;
+                    $updatedCount = 0;
+                    foreach ($proxies as $proxy) {
+                        if (app('db')
                             ->table('proxies')
-                            ->insert([
-                                'address' => $proxy->getAddress(),
-                                'protocol' => $proxy->getProtocol(),
-                                'domain' => $domain,
-                                'created_at' => Carbon::now('Europe/Minsk')->toDateTimeString()
-                            ]);
-                        $addedCount++;
+                            ->where('address', $proxy->getAddress())
+                            ->update([
+                                'updated_at' => Carbon::now('Europe/Minsk')->toDateTimeString()
+                            ])
+                        ) {
+                            $updatedCount++;
+                        } else {
+                            app('db')
+                                ->table('proxies')
+                                ->insert([
+                                    'address' => $proxy->getAddress(),
+                                    'protocol' => $proxy->getProtocol(),
+                                    'domain' => $domain,
+                                    'created_at' => Carbon::now('Europe/Minsk')->toDateTimeString()
+                                ]);
+                            $addedCount++;
+                        }
                     }
+
+                    $this->info(sprintf(
+                        'Added %d new proxies, updated %d proxies from %s',
+                        $addedCount,
+                        $updatedCount,
+                        $domain
+                    ));
+                } catch (\Exception $e) {
+                    $this->error(sprintf('Site %s ignored: %s' . PHP_EOL, $domain, $e->getMessage()));
                 }
-                $this->info(sprintf(
-                    'Added %d new proxies, updated %d proxies from %s',
-                    $addedCount,
-                    $updatedCount,
-                    $domain
-                ));
-            } catch (\Exception $e) {
-                $this->error(sprintf('Site %s ignored: %s' . PHP_EOL, $domain, $e->getMessage()));
             }
+        } else {
+            $this->warn('Setting PROXIES_SITES is empty in .env');
         }
 
         return 0;

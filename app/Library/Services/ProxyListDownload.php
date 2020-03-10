@@ -41,7 +41,7 @@ class ProxyListDownload extends SiteWithProxies
         $proxies = [];
         foreach ($rows as $row) {
             if ($row) {
-                $proxies[] = new Proxy($row, 'http');
+                $proxies[] = new Proxy(trim($row), 'http');
             }
         }
 

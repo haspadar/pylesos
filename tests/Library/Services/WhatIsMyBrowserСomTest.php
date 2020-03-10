@@ -1,15 +1,9 @@
 <?php
 
-use App\Library\Services\FreeProxyCz;
-use App\Library\Services\SiteWithProxies;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Laravel\Lumen\Testing\DatabaseMigrations;
-use Laravel\Lumen\Testing\DatabaseTransactions;
 
 class WhatIsMyBrowserСomTest extends TestCase
 {

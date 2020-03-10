@@ -3,66 +3,31 @@
 namespace App\Library;
 
 use App\Library\Motor\BanException;
-use App\Library\Motor\Exception;
+use App\Library\Motor\ConnectionException;
 use App\Library\Motor\NotFoundException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ConnectException;
 use Psr\Http\Message\ResponseInterface;
 
 class Motor
 {
     /**
-     * @var Client
-     */
-    private Client $client;
-
-    /**
      * @var ResponseInterface
      */
     private ResponseInterface $response;
 
-    public function download(string $url, Client $client): string
-    {
-        $this->client = $client;
-
-        return $this->checkForExceptionsResponse($url);
-    }
-
-    public function getResponse(): ?ResponseInterface
-    {
-        return $this->response;
-    }
-
-    public function getClient(): ?Client
-    {
-        return $this->client;
-    }
-
-    private function hasBannedText(string $content): bool
-    {
-        $patterns = ['IP', 'Banned'];
-        $lowerWords = explode(' ', strtolower($content));
-        foreach ($patterns as $pattern) {
-            if (in_array(strtolower($pattern), $lowerWords)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     /**
      * @param string $url
+     * @param Client $client
      * @return string
      * @throws BanException
-     * @throws Exception
+     * @throws ConnectionException
      * @throws NotFoundException
      */
-    private function checkForExceptionsResponse(string $url): string
+    public function download(string $url, Client $client): string
     {
         try {
-            $this->response = $this->client
+            $this->response = $client
                 ->request('get', $url, [
                     'connect_timeout' => 5
                 ]);
@@ -77,7 +42,7 @@ class Motor
 
             throw new NotFoundException(get_class($e) . ': ' . $e->getMessage(), $e->getCode());
         } catch (\Exception $e) {
-            throw new NotFoundException(get_class($e) . ': ' . $e->getMessage(), $e->getCode());
+            throw new ConnectionException(get_class($e) . ': ' . $e->getMessage(), $e->getCode());
         }
 
         $content = $this->response
@@ -88,9 +53,27 @@ class Motor
         }
 
         if (!$content) {
-            throw new NotFoundException('No content: ' . $content, $this->response->getStatusCode());
+            throw new ConnectionException('No content: ' . $content, $this->response->getStatusCode());
         }
 
         return $content;
+    }
+
+    public function getResponse(): ?ResponseInterface
+    {
+        return $this->response;
+    }
+
+    private function hasBannedText(string $content): bool
+    {
+        $patterns = ['IP', 'Banned'];
+        $lowerWords = explode(' ', strtolower($content));
+        foreach ($patterns as $pattern) {
+            if (in_array(strtolower($pattern), $lowerWords)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

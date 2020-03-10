@@ -1,5 +1,7 @@
 <?php
 
+use App\Library\Proxy;
+use App\Library\Services\ProxyListDownload;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
@@ -17,9 +19,9 @@ class ProxyListDownloadTest extends TestCase
     public function testParsing()
     {
         /**
-         * @var $proxiesSource \App\Library\Services\ProxyListDownload
+         * @var $proxiesSource ProxyListDownload
          */
-        $proxiesSource = new \App\Library\Services\ProxyListDownload(1);
+        $proxiesSource = new ProxyListDownload(1);
         $responsesDirectory = __DIR__ . '/../../mock/responses/proxy-list.download';
         $mock = new MockHandler([
             new Response(200, [], file_get_contents($responsesDirectory . '/page1.txt'))
@@ -27,8 +29,8 @@ class ProxyListDownloadTest extends TestCase
         $handlerStack = HandlerStack::create($mock);
         $proxies = $proxiesSource->downloadProxies($handlerStack);
         $this->assertEquals([
-            new \App\Library\Proxy('1.1.1.1:8080', 'http'),
-            new \App\Library\Proxy('2.2.2.2:3128', 'http'),
+            new Proxy('1.1.1.1:8080'),
+            new Proxy('2.2.2.2:3128'),
         ], $proxies);
     }
 }

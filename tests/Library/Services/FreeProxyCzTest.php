@@ -1,5 +1,6 @@
 <?php
 
+use App\Library\Proxy;
 use App\Library\Services\FreeProxyCz;
 use App\Library\Services\SiteWithProxies;
 use GuzzleHttp\Client;
@@ -34,10 +35,10 @@ class FreeProxyCzTest extends TestCase
         $handlerStack = HandlerStack::create($mock);
         $proxies = $proxiesSource->downloadProxies($handlerStack);
         $this->assertEquals([
-            new \App\Library\Proxy('1.1.1.1:8080', 'https'),
-            new \App\Library\Proxy('1.1.1.2:3128', 'https'),
-            new \App\Library\Proxy('2.2.2.1:8080', 'https'),
-            new \App\Library\Proxy('2.2.2.2:3128', 'https')
+            new Proxy('1.1.1.1:8080', 'https'),
+            new Proxy('1.1.1.2:3128', 'https'),
+            new Proxy('2.2.2.1:8080', 'https'),
+            new Proxy('2.2.2.2:3128', 'https')
         ], $proxies);
     }
 }

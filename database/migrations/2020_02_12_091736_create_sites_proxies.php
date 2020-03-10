@@ -20,11 +20,11 @@ class CreateSitesProxies extends Migration
             $table->foreign('site_id')
                 ->references('id')
                 ->on('sites')
-                ->onDelete('cascade');;
+                ->onDelete('cascade');
             $table->foreign('proxy_id')
                 ->references('id')
                 ->on('proxies')
-                ->onDelete('cascade');;
+                ->onDelete('cascade');
             $table->nullableTimestamps();
         });
     }

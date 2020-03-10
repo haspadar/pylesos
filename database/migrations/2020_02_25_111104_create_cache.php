@@ -18,7 +18,7 @@ class CreateCache extends Migration
             $table->string('domain', 100)->default('')->index();
             $table->string('url', 1024)->default('')->unique();
             $table->longText('response')->nullable();
-            $table->timestamp('created_at')->nullable();
+            $table->timestamp('created_at')->nullable()->index();
         });
     }
 

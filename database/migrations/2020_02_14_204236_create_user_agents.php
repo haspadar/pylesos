@@ -15,7 +15,7 @@ class CreateUserAgents extends Migration
     {
         Schema::create('users_agents', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('user_agent')->unique();
+            $table->string('user_agent', 200)->unique();
             $table->tinyInteger('is_mobile')->default(0);
             $table->index('is_mobile');
             $table->nullableTimestamps();

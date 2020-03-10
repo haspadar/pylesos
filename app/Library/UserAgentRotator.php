@@ -3,84 +3,23 @@ namespace App\Library;
 
 class UserAgentRotator
 {
-    private Site $site;
-
-    private string $liveUserAgent;
-
-    public function __construct(Site $site)
-    {
-        $this->site = $site;
-        if (!$this->hasSiteUsersAgents()) {
-            $this->addSiteUsersAgents();
-        }
-
-        $this->setLiveUserAgent($this->getFirstSiteUserAgent());
-    }
+    use Rotator;
 
     public function getLiveUserAgent(): string
     {
-        return $this->liveUserAgent;
+        return $this->getRow() ?? '';
     }
 
-    public function getUsersAgentsCount(): int
+    public static function findLiveUsersAgents(int $siteId): array
     {
-        return \DB::select('SELECT COUNT(*) AS count FROM sites_users_agents WHERE site_id = ?', [
-            $this->site->getId()
-        ])[0]->count;
-    }
-
-    public function blockUserAgent(): void
-    {
-        if ($this->liveUserAgent) {
-            $userAgentId = \DB::table('users_agents')->where('user_agent', $this->liveUserAgent)->get()[0]->id;
-            \DB::table('sites_users_agents')
-                ->where('site_id', $this->site->getId())
-                ->where('user_agent_id', $userAgentId)
-                ->delete();
-            if (!$this->hasSiteUsersAgents()) {
-                $this->addSiteUsersAgents();
-            }
-
-            $this->setLiveUserAgent($this->getFirstSiteUserAgent());
-        }
-    }
-
-    public function getFirstSiteUserAgent(): string
-    {
-        $foundAll = \DB::select('SELECT * FROM sites_users_agents WHERE site_id = ?', [$this->site->getId()]);
-        if ($foundAll) {
-            $userAgents = \DB::select('SELECT * FROM users_agents WHERE id = ?', [$foundAll[0]->user_agent_id]);
-
-            return $userAgents[0]->user_agent;
+        $rows = \DB::select('SELECT * FROM users_agents WHERE user_agent NOT IN(SELECT user_agent FROM responses WHERE site_id = :site_id AND is_banned = 1) ORDER BY created_at DESC', [
+            'site_id' => $siteId
+        ]);
+        $usersAgents = [];
+        foreach ($rows as $row) {
+            $usersAgents[] = $row->user_agent;
         }
 
-        return '';
-    }
-
-    private function setLiveUserAgent(string $userAgent): void
-    {
-        $this->liveUserAgent = $userAgent;
-    }
-
-    private function getSite($url): Site
-    {
-        return $this->site;
-    }
-
-    private function hasSiteUsersAgents(): bool
-    {
-        return \DB::select('SELECT * FROM sites_users_agents WHERE site_id = :site_id', [
-            'site_id' => $this->site->getId()
-        ]) ? true : false;
-    }
-
-    private function addSiteUsersAgents(): void
-    {
-        foreach (\DB::select('SELECT * FROM users_agents') as $userAgent) {
-            \DB::insert('INSERT INTO sites_users_agents (site_id, user_agent_id) values (?, ?)', [
-                $this->site->getId(),
-                $userAgent->id
-            ]);
-        }
+        return $usersAgents;
     }
 }

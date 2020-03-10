@@ -44,7 +44,7 @@ class MotorTest extends TestCase
             ])
         );
         $motor = new \App\Library\Motor();
-        $this->expectException(\App\Library\Motor\NotFoundException::class);
+        $this->expectException(\App\Library\Motor\ConnectionException::class);
         $motor->download(self::URL, $this->getClient($handlerStack));
     }
 

@@ -14,7 +14,7 @@ class Proxy
 
     private int $id = 0;
 
-    public function __construct(string $ipWithPort, string $protocol)
+    public function __construct(string $ipWithPort = '', string $protocol = 'http')
     {
         $this->ipWithPort = $ipWithPort;
         $this->protocol = $protocol;
@@ -23,6 +23,23 @@ class Proxy
     public function getAddress(): string
     {
         return $this->ipWithPort;
+    }
+
+    public function getCurlProxyType(): string
+    {
+        if ($this->protocol == 'https') {
+            $type = CURLPROXY_HTTP;
+        } elseif ($this->protocol == 'socks4') {
+            $type = CURLPROXY_SOCKS4;
+        } elseif ($this->protocol == 'socks5') {
+            $type = CURLPROXY_SOCKS5;
+        } elseif ($this->protocol == 'https') {
+            $type = CURLPROXY_HTTPS;
+        } else {
+            $type = CURLPROXY_HTTP;
+        }
+
+        return $type;
     }
 
     /**
