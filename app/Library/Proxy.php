@@ -6,13 +6,13 @@ class Proxy
     /**
      * @var string
      */
-    private string $ipWithPort;
+    protected string $ipWithPort;
     /**
      * @var string
      */
-    private string $protocol;
+    protected string $protocol;
 
-    private int $id = 0;
+    protected int $id = 0;
 
     public function __construct(string $ipWithPort = '', string $protocol = 'http')
     {
