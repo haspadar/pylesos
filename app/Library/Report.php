@@ -2,68 +2,56 @@
 
 namespace App\Library;
 
-use App\Library\Motor\Exception;
+use App\Library\Report\Connection;
+use App\Library\Report\Page;
+use Carbon\Carbon;
+use Psr\Http\Message\ResponseInterface;
 
 class Report
 {
-    private array $badProxies = [];
+    private int $id;
 
-    private array $goodProxies = [];
+    private Domain $domain;
 
-    private \Exception $exception;
+    private string $page;
 
-    public function addGoodProxy(string $url, Proxy $proxy): void
+    private array $connections;
+
+    public function __construct(string $page)
     {
-        \Log::info('Good proxy: ' . $proxy->getAddress());
-        $this->badProxies[$url][] = $proxy;
+        $this->page = $page;
+        $this->id = \DB::table('reports')->insertGetId([
+            'domain' => new Domain($page),
+            'created_at' => Carbon::now()->toDateTimeString()
+        ]);
     }
 
-    public function addBadProxy(string $url, Proxy $proxy, \Exception $e): void
+    public function getId(): int
     {
-        \Log::warning('Bad proxy: ' . $proxy->getAddress() . ', ' . get_class($e) . ': ' . $e->getMessage());
-        $this->goodProxies[$url][] = [$proxy, $e];
+        return $this->id;
     }
 
-    public function getBadProxiesCount(string $url = ''): int
-    {
-        return $url
-            ? count($this->badProxies[$url] ?? [])
-            : count($this->badProxies);
+    public function add(
+        Proxy $proxy,
+        string $userAgent,
+        string $responseContent,
+        ?ResponseInterface $response,
+        ?\Exception $exception = null
+    ): void {
+        $this->connections[] = new Connection(
+            $proxy,
+            $userAgent,
+            $responseContent,
+            $response,
+            $exception
+        );
     }
 
-    public function getGoodProxies(string $url = ''): array
+    /**
+     * @return Connection[]
+     */
+    public function getConnections(): array
     {
-        return $url
-            ? ($this->goodProxies[$url] ?? [])
-            : $this->goodProxies;
-    }
-
-    public function getBadProxies(string $url = ''): array
-    {
-        return $url
-            ? ($this->badProxies[$url] ?? [])
-            : $this->badProxies;
-    }
-
-    public function getGoodProxiesCount(string $url = ''): int
-    {
-        return $url
-            ? count($this->goodProxies[$url] ?? [])
-            : count($this->goodProxies);
-    }
-
-    public function getProxiesCount(string $url = ''): int
-    {
-        return $this->getBadProxiesCount($url) + $this->getGoodProxiesCount($url);
-    }
-
-    public function getException(): \Exception
-    {
-        return $this->exception;
-    }
-
-    public function addException(\Exception $e): void
-    {
-        $this->exception = $e;
+        return $this->connections;
     }
 }

@@ -2,7 +2,7 @@
 
 use App\Library\Proxy;
 use App\Library\Services\FreeProxyCz;
-use App\Library\Services\SiteWithProxies;
+use App\Library\Services\SiteWithParseProxies;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
@@ -40,5 +40,11 @@ class FreeProxyCzTest extends TestCase
             new Proxy('2.2.2.1:8080', 'https'),
             new Proxy('2.2.2.2:3128', 'https')
         ], $proxies);
+    }
+
+    public function testAdapterName()
+    {
+        $freeProxyCz = new FreeProxyCz(1);
+        $this->assertEquals('FreeProxyCz', $freeProxyCz->getProxyAdapter());
     }
 }

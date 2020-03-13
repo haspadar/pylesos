@@ -4,10 +4,9 @@ namespace App\Library\Services;
 use App\Library\Proxy;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
-use Illuminate\Validation\Validator;
 use Symfony\Component\DomCrawler\Crawler;
 
-class FreeProxyCz extends SiteWithProxies
+class FreeProxyCz extends SiteWithParseProxies
 {
     protected string $domain = 'http://free-proxy.cz';
 
@@ -41,6 +40,11 @@ class FreeProxyCz extends SiteWithProxies
         });
 
         return $proxies;
+    }
+
+    public static function getProxies(): array
+    {
+        // TODO: Implement getProxies() method.
     }
 
     /**

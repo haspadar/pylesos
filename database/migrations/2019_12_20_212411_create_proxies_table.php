@@ -19,6 +19,7 @@ class CreateProxiesTable extends Migration
             $table->enum('protocol', ['http','https','socks4','socks5'])
                 ->default('https');
             $table->string('domain',100)->default('')->index();
+            $table->string('adapter',100)->default('')->index();
             $table->timestamps();
             $table->unique(['address']);
             $table->index(['created_at']);

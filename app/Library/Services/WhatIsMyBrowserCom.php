@@ -8,7 +8,7 @@ use GuzzleHttp\HandlerStack;
 use Illuminate\Validation\Validator;
 use Symfony\Component\DomCrawler\Crawler;
 
-class WhatIsMyBrowserCom extends SiteWithUserAgents
+class WhatIsMyBrowserCom extends SiteWithParseUserAgents
 {
     protected string $domain = 'https://developers.whatismybrowser.com';
 

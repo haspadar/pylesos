@@ -3,21 +3,26 @@ namespace App\Library;
 
 class Proxy
 {
-    /**
-     * @var string
-     */
     protected string $ipWithPort;
-    /**
-     * @var string
-     */
+
     protected string $protocol;
 
     protected int $id = 0;
 
-    public function __construct(string $ipWithPort = '', string $protocol = 'http')
-    {
+    private string $login;
+
+    private string $password;
+
+    public function __construct(
+        string $ipWithPort = '',
+        string $protocol = 'http',
+        string $login = '',
+        string $password = ''
+    ) {
         $this->ipWithPort = $ipWithPort;
-        $this->protocol = $protocol;
+        $this->protocol = strtolower($protocol);
+        $this->login = $login;
+        $this->password = $password;
     }
 
     public function getAddress(): string
@@ -25,6 +30,19 @@ class Proxy
         return $this->ipWithPort;
     }
 
+    /**
+     * Value for CURLOPT_PROXYUSERPWD
+     * @return string
+     */
+    public function getCurlProxyPassword(): string
+    {
+        return $this->login . ':' . $this->password;
+    }
+
+    /**
+     * Value for CURLOPT_PROXYTYPE
+     * @return string
+     */
     public function getCurlProxyType(): string
     {
         if ($this->protocol == 'https') {

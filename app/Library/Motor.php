@@ -11,17 +11,13 @@ use Psr\Http\Message\ResponseInterface;
 
 class Motor
 {
-    /**
-     * @var ResponseInterface
-     */
-    private ResponseInterface $response;
+    private ?ResponseInterface $response = null;
 
     /**
      * @param string $url
      * @param Client $client
      * @return string
      * @throws BanException
-     * @throws ConnectionException
      * @throws NotFoundException
      */
     public function download(string $url, Client $client): string
@@ -31,29 +27,21 @@ class Motor
                 ->request('get', $url, [
                     'connect_timeout' => 5
                 ]);
+            $content = $this->response
+                ->getBody()
+                ->getContents();
         } catch (ClientException $e) {
-            if ($e->getCode() == 404) {
-                throw new NotFoundException(get_class($e) . ': ' . $e->getMessage(), $e->getCode());
-            }
+            $this->response = $e->getResponse();
 
-            if (intval($e->getCode() / 100) == 4) {
-                throw new BanException(get_class($e) . ': ' . $e->getMessage(), $e->getCode());
-            }
-
-            throw new NotFoundException(get_class($e) . ': ' . $e->getMessage(), $e->getCode());
-        } catch (\Exception $e) {
-            throw new ConnectionException(get_class($e) . ': ' . $e->getMessage(), $e->getCode());
+            throw $e;
         }
 
-        $content = $this->response
-            ->getBody()
-            ->getContents();
         if ($this->hasBannedText($content)) {
             throw new BanException('Content has banned text: ' . $content, $this->response->getStatusCode());
         }
 
         if (!$content) {
-            throw new ConnectionException('No content: ' . $content, $this->response->getStatusCode());
+            throw new NotFoundException('No content: ' . $content, $this->response->getStatusCode());
         }
 
         return $content;
@@ -61,7 +49,7 @@ class Motor
 
     public function getResponse(): ?ResponseInterface
     {
-        return $this->response;
+        return $this->response ?? null;
     }
 
     private function hasBannedText(string $content): bool

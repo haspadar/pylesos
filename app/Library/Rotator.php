@@ -5,7 +5,7 @@ trait Rotator
 {
     private array $rows;
 
-    public function __construct(array $rows)
+    public function __construct(array $rows = [])
     {
         $this->rows = $rows;
     }

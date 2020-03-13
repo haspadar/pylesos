@@ -2,7 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Library\Services\SiteWithUserAgents;
+use App\Library\Services\SiteWithParseUserAgents;
+use App\Library\Site;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -35,10 +36,10 @@ class DownloadUserAgents extends Command
     /**
      * Execute the console command.
      *
-     * @param SiteWithUserAgents $site
+     * @param SiteWithParseUserAgents $site
      * @return mixed
      */
-    public function handle(SiteWithUserAgents $site)
+    public function handle(SiteWithParseUserAgents $site)
     {
         $userAgents = $site->downloadUserAgents();
         $addedCount = 0;
@@ -68,5 +69,18 @@ class DownloadUserAgents extends Command
         $this->info(sprintf('Added %d new User-Agents, updated %d User-Agents', $addedCount, $updatedCount));
 
         return 0;
+    }
+
+    public static function findLiveUsersAgents(Site $site): array
+    {
+        $rows = \DB::select('SELECT * FROM users_agents WHERE user_agent NOT IN(SELECT user_agent FROM connections WHERE domain = :domain AND is_skipped = 1)', [
+            'domain' => $site->getDomain()
+        ]);
+        $usersAgents = [];
+        foreach ($rows as $row) {
+            $usersAgents[] = $row->user_agent;
+        }
+
+        return $usersAgents;
     }
 }

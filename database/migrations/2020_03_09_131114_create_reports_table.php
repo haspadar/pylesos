@@ -15,18 +15,16 @@ class CreateReportsTable extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('site_id');
-            $table->foreign('site_id')
-                ->references('id')
-                ->on('sites')
-                ->onDelete('cascade');
-            $table->string('url')->index();
-            $table->integer('http_code', false, true)->default(200)->index();
-            $table->longText('response')->nullable();
-            $table->tinyInteger('is_cached', false, true)->default(0)->index();
-            $table->tinyInteger('is_downloaded', false, true)->default(0)->index();
-            $table->integer('attempts_count', false, true)->default(0)->index();
-            $table->timestamp('created_at')->nullable()->index();
+            $table->string('domain');
+            $table->integer('pages_count', false, true)
+                ->default(0);
+            $table->integer('downloaded_pages_count', false, true)
+                ->default(0);
+            $table->integer('skipped_pages_count', false, true)
+                ->default(0);
+            $table->nullableTimestamps();
+            $table->index('created_at');
+            $table->index('updated_at');
         });
     }
 

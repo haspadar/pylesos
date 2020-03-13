@@ -25,7 +25,7 @@ class SiteWithProxiesServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('App\Library\Services\SiteWithProxies', function ($app) {
+        $this->app->bind('App\Library\Services\SiteWithParseProxies', function ($app) {
             return new FreeProxyCz();
         });
     }

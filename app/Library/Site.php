@@ -1,16 +1,17 @@
 <?php
 namespace App\Library;
 
+use App\Library\Proxy\Adapters\FreeProxySites;
+
 class Site
 {
     private $row;
 
-    /**
-     * @var Domain
-     */
     private Domain $domain;
 
-    public function __construct(string $url)
+    private array $options;
+
+    public function __construct(string $url, array $options = [])
     {
         $this->domain = new Domain($url);
         $this->row = $this->getRow();
@@ -22,11 +23,25 @@ class Site
             ]);
             $this->row = $this->getRow();
         }
+
+        $this->options = $options ?: $_ENV;
     }
 
     public function getId(): int
     {
         return $this->row->id;
+    }
+
+    public function getProxiesAdapters(): array
+    {
+        $adaptersNames = explode(',', $this->getOption('PROXY_ADAPTERS'));
+        $adapters = [];
+        foreach ($adaptersNames as $adapterName) {
+            $className = 'App\Library\Proxy\Adapters\\' . $adapterName;
+            $adapters[] = new $className();
+        }
+
+        return $adapters;
     }
 
     public function getDomain(): Domain
@@ -41,5 +56,10 @@ class Site
         ]);
 
         return $found ? $found[0] : $found;
+    }
+
+    private function getOption(string $name): string
+    {
+        return  $this->options['SITES'][strtr($this->domain, ['.' => '_'])][$name] ?? '';
     }
 }

@@ -25,7 +25,7 @@ class SiteWithUserAgentsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('App\Library\Services\SiteWithUserAgents', function ($app) {
+        $this->app->bind('App\Library\Services\SiteWithParseUserAgents', function ($app) {
             return new WhatIsMyBrowserCom();
         });
     }

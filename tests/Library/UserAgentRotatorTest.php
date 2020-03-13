@@ -36,14 +36,14 @@ class UserAgentRotatorTest extends TestCase
     {
         $site = new Site(self::URL);
         $rotator = new UserAgentRotator(
-            UserAgentRotator::findLiveUsersAgents($site->getId())
+            \App\Console\Commands\DownloadUserAgents::findLiveUsersAgents($site)
         );
-        $this->assertEquals($rotator->getLiveUserAgent(), self::USERS_AGENTS[0]);
+        $this->assertEquals($rotator->getUserAgent(), self::USERS_AGENTS[0]);
         $this->assertEquals($rotator->getRowsCount(), count(self::USERS_AGENTS));
         $rotator->skip();
-        $this->assertEquals($rotator->getLiveUserAgent(), self::USERS_AGENTS[1]);
+        $this->assertEquals($rotator->getUserAgent(), self::USERS_AGENTS[1]);
         $this->assertEquals($rotator->getRowsCount(), count(self::USERS_AGENTS) - 1);
         $rotator->skip();
-        $this->assertEquals($rotator->getLiveUserAgent(), '');
+        $this->assertEquals($rotator->getUserAgent(), '');
     }
 }

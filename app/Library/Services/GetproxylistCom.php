@@ -7,7 +7,7 @@ use GuzzleHttp\HandlerStack;
 use Illuminate\Validation\Validator;
 use Symfony\Component\DomCrawler\Crawler;
 
-class GetProxyListCom extends SiteWithProxies
+class GetproxylistCom extends SiteWithParseProxies
 {
     protected string $domain = 'https://api.getproxylist.com';
 

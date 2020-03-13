@@ -5,7 +5,7 @@ namespace App\Library\Services;
 abstract class ProxiesSitesList
 {
     /**
-     * @var SiteWithProxies[]
+     * @var SiteWithParseProxies[]
      */
     protected array $sites = [];
 

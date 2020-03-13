@@ -7,7 +7,7 @@ use GuzzleHttp\HandlerStack;
 use Illuminate\Validation\Validator;
 use Symfony\Component\DomCrawler\Crawler;
 
-class ProxyListDownload extends SiteWithProxies
+class ProxyListDownload extends SiteWithParseProxies
 {
     protected string $domain = 'https://www.proxy-list.download';
 

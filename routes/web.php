@@ -1,5 +1,13 @@
 <?php
 
+use App\Console\Commands\DownloadProxies;
+use App\Console\Commands\DownloadUserAgents;
+use App\Library\Motor;
+use App\Library\ProxyRotator;
+use App\Library\Pylesos;
+use App\Library\Report;
+use App\Library\Site;
+use App\Library\UserAgentRotator;
 use Illuminate\Http\Request;
 
 /*
@@ -21,25 +29,19 @@ $router->get('/download', function (Request $request) use ($router) {
         'page' => 'required|url'
     ]);
     $page = $_GET['page'];
-    $site = new \App\Library\Site($page);
-    $proxyRotator = new \App\Library\ProxyRotator(
-        \App\Library\ProxyRotator::findLiveProxies($site->getId())
-    );
-    $userAgentRotator = new \App\Library\UserAgentRotator(
-        \App\Library\UserAgentRotator::findLiveUsersAgents($site->getId())
-    );
-    $pylesos = new \App\Library\Pylesos(
-        new \App\Library\Motor(),
+    $site = new Site($page);
+    $proxyRotator = new ProxyRotator(DownloadProxies::findLiveProxies($site));
+    $userAgentRotator = new UserAgentRotator(DownloadUserAgents::findLiveUsersAgents($site));
+    $pylesos = new Pylesos(
+        new Motor(),
         $proxyRotator,
         $userAgentRotator,
-        false
+        new Report($page)
     );
-    try {
-        $response = $pylesos->download($page);
-    } catch (\Exception $e) {}
-dd($pylesos->getReport()->getBadProxies());
+    $response = $pylesos->download($page, true);
+
     return response()->json([
         'content' => $response ?? '',
-        'report' => $pylesos->getReport()->getBadProxies()
+        'report' => $pylesos->getReport()
     ]);
 });

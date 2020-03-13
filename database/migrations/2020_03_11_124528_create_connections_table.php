@@ -20,18 +20,17 @@ class CreateConnectionsTable extends Migration
                 ->references('id')
                 ->on('reports')
                 ->onDelete('cascade');
-            $table->unsignedBigInteger('site_id');
-            $table->foreign('site_id')
-                ->references('id')
-                ->on('sites')
-                ->onDelete('cascade');
+            $table->string('url', 1024)->index();
+            $table->string('domain')->index();
             $table->string('proxy', 50)->default('')->index();
             $table->string('user_agent', 200)->default('')->index();
-            $table->integer('http_code', false, true)->default(0)->index();
+            $table->integer('http_code', false, true)
+                ->default(0)
+                ->index();
             $table->longText('response')->nullable();
-            $table->tinyInteger('is_cached', false, true)->default(0)->index();
-            $table->tinyInteger('is_downloaded', false, true)->default(0)->index();
-            $table->tinyInteger('is_banned', false, true)->default(0)->index();
+            $table->tinyInteger('is_skipped', false, true)
+                ->default(0)
+                ->index();
             $table->timestamp('created_at')->nullable()->index();
         });
     }

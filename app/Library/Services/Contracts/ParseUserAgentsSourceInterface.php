@@ -3,7 +3,7 @@ namespace App\Library\Services\Contracts;
 
 use GuzzleHttp\HandlerStack;
 
-interface UserAgentsSourceInterface
+interface ParseUserAgentsSourceInterface
 {
     public function downloadUserAgents(HandlerStack $handlerStack = null): array;
 }
