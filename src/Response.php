@@ -53,8 +53,8 @@ class Response
     public function colorize(): void
     {
         $climate = new CLImate();
-        $climate->cyan()->inline('Body: ');
-        $climate->yellow()->out(' ' . mb_substr($this->parseBody($this->response), 0, 1200));
+        $climate->cyan()->inline(PHP_EOL . 'Body: ');
+        $climate->yellow()->out(' ' . mb_substr($this->parseBody($this->response), 0, 1200) . PHP_EOL);
         $mainFields = [
             'Title: ' . $this->parseTitle($this->response),
             'Http Code: ' . $this->code,
@@ -64,23 +64,7 @@ class Response
         $climate->cyan()->columns($mainFields, 1);
         $climate->cyan()->out('');
         if ($this->debug) {
-            $key = 0;
-            foreach ($this->debug as $name => $debugValues) {
-                $debugColumns = [];
-                foreach ($debugValues as $field => $value) {
-                    if ($value) {
-                        $debugColumns[] = $field . ': ' . $value;
-                    }
-                }
-
-                if (!($key++ % 2)) {
-                    $climate->yellow()->columns($debugColumns, 1);
-                }  else {
-                    $climate->cyan()->columns($debugColumns, 1);
-                }
-
-                $climate->yellow()->out('');
-            }
+            $climate->dump($this->debug);
         }
     }
 
