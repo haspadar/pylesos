@@ -14,9 +14,11 @@
         "php": ">=7.4",
         "ext-posix": "*",
         "ext-curl": "*",
+        "ext-zip": "*",
         "vlucas/phpdotenv": "^5.1",
         "ext-json": "*",
-        "league/climate": "dev-master"
+        "league/climate": "dev-master",
+        "php-webdriver/webdriver": "1.8.x-dev"
     },
     "autoload": {
         "psr-4": {

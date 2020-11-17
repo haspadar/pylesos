@@ -2,11 +2,15 @@
 
 namespace Pylesos;
 
+use League\CLImate\CLImate;
+
 class Request
 {
     public const MOTOR_CURL = 'curl';
 
-    public const MOTOR_PUPHPETEER = 'puphpeteer';
+    public const MOTOR_CHROME = 'chrome';
+
+    public const MOTOR_FIREFOX = 'firefox';
 
     private const URL = 'url';
 
@@ -26,6 +30,14 @@ class Request
 
     private const BAN_CODES = 'ban_codes';
 
+    private const MOBILE_USER_AGENT = 'mobile_user_agent';
+
+    private const DESKTOP_USER_AGENT = 'desktop_user_agent';
+
+    private const WEB_DRIVER_HOST = 'web_driver_host';
+
+    private const CHROME_DRIVER = 'chrome_driver';
+
     private array $cliParams;
 
     private string $error = '';
@@ -42,7 +54,11 @@ class Request
         self::MOTOR,
         self::BAN_WORDS,
         self::BAN_CODES,
-        self::DEBUG
+        self::DEBUG,
+        self::MOBILE_USER_AGENT,
+        self::DESKTOP_USER_AGENT,
+        self::WEB_DRIVER_HOST,
+        self::CHROME_DRIVER,
     ];
 
     private const DEFAULTS = [
@@ -94,6 +110,11 @@ class Request
         return $this->getArrayParam(self::ROTATOR_PROXIES);
     }
 
+    public function getWebDriverHost(): string
+    {
+        return $this->getParam(self::WEB_DRIVER_HOST);
+    }
+
     public function getProxyAddress(): string
     {
         return $this->getParam(self::PROXY_ADDRESS);
@@ -116,9 +137,19 @@ class Request
 
     public function generateMotor(): MotorInterface
     {
-        return $this->getMotor() == Request::MOTOR_CURL
-            ? new Curl($this)
-            : new Puphpeteer($this);
+        try {
+            if ($this->getMotor() == Request::MOTOR_CURL) {
+                return new Curl($this);
+            }
+
+            if ($this->getMotor() == Request::MOTOR_CHROME) {
+                return new Chrome($this);
+            }
+        } catch (\Exception $e) {
+            $climate = new CLImate();
+            $climate->error($e->getMessage());
+            exit;
+        }
     }
 
     public function getParam(string $name): string
@@ -139,6 +170,25 @@ class Request
     public function canConvertToArray(string $value): bool
     {
         return mb_strpos($value, PHP_EOL) !== false;
+    }
+
+    public function getUserAgent(string $url): string
+    {
+        $isMobileUrl = substr($url, 0, 2) == 'm.';
+
+        return $isMobileUrl
+            ? $this->getMobileUserAgent()
+            : $this->getDesktopUserAgent();
+    }
+
+    public function getMobileUserAgent(): string
+    {
+        return $this->getParam(self::MOBILE_USER_AGENT);
+    }
+
+    public function getDesktopUserAgent(): string
+    {
+        return $this->getParam(self::DESKTOP_USER_AGENT);
     }
 
     public function parseArrayParam(string $value): array
@@ -231,9 +281,10 @@ class Request
     {
         if ($this->params[self::MOTOR] && !in_array($this->params[self::MOTOR], [
             self::MOTOR_CURL,
-            self::MOTOR_PUPHPETEER
+            self::MOTOR_CHROME,
+            self::MOTOR_FIREFOX
         ])) {
-            $this->error = 'Невалидный мотор: допускаются curl и puphpeteer';
+            $this->error = 'Невалидный мотор: допускаются curl, chrome, firefox';
         }
 
         return $this->error ? false : true;
@@ -256,5 +307,10 @@ class Request
         $cliNames = array_map(fn($name) => $name . ':', self::CLI_NAMES);
 
         return getopt('', $cliNames);
+    }
+
+    public function getChromeDriver(): string
+    {
+        return $this->getParam(self::CHROME_DRIVER);
     }
 }
