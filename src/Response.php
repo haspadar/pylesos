@@ -36,6 +36,8 @@ class Response
         return var_export([
             'title' => $this->parseTitle($this->response),
             'http_code' => $this->code,
+            'proxy_address' => $this->proxy ? $this->proxy->getAddress() : '',
+            'proxy_auth' => $this->proxy ? $this->proxy->getAuth() : '',
             'error' => $this->error,
             'ban_words' => $banWords,
             'is_ban' => $this->isBan(),
@@ -54,12 +56,19 @@ class Response
     {
         $climate = new CLImate();
         $climate->cyan()->inline(PHP_EOL . 'Body: ');
-        $climate->yellow()->out(' ' . mb_substr($this->parseBody($this->response), 0, 1200) . PHP_EOL);
+        if (mb_strpos($this->response, '<title>') !== false) {
+            $climate->yellow()->out(' ' . mb_substr($this->parseBody($this->response), 0, 1200) . PHP_EOL);
+        } else {
+            $climate->yellow()->out(' ' . mb_substr($this->response, 0, 1200) . PHP_EOL);
+        }
+
         $mainFields = [
             'Title: ' . $this->parseTitle($this->response),
             'Http Code: ' . $this->code,
             'Error: ' . $this->error,
-            'Is Ban: ' . intval($this->isBan())
+            'Is Ban: ' . intval($this->isBan()),
+            'Proxy Address: ' . ($this->proxy ? $this->proxy->getAddress() : ''),
+            'Proxy Auth: ' . ($this->proxy ? $this->proxy->getAuth() : '')
         ];
         $climate->cyan()->columns($mainFields, 1);
         $climate->cyan()->out('');

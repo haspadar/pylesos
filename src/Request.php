@@ -14,9 +14,9 @@ class Request
 
     private const URL = 'url';
 
-    private const PROXY_ADDRESS = 'address';
+    private const PROXY = 'proxy';
 
-    private const PROXY_AUTH = 'auth';
+    private const PROXY_AUTH = 'proxy_auth';
 
     private const MOTOR = 'motor';
 
@@ -24,7 +24,7 @@ class Request
 
     private const ROTATOR_URL = 'rotator_url';
 
-    private const ROTATOR_PROXIES = 'rotator_proxies';
+    private const PROXIES = 'proxies';
 
     private const BAN_WORDS = 'ban_words';
 
@@ -38,6 +38,8 @@ class Request
 
     private const CHROME_DRIVER = 'chrome_driver';
 
+    private const SQUID_ADDRESSES = 'squid_addresses';
+
     private array $cliParams;
 
     private string $error = '';
@@ -48,7 +50,7 @@ class Request
 
     private const CLI_NAMES = [
         self::URL,
-        self::PROXY_ADDRESS,
+        self::PROXY,
         self::PROXY_AUTH,
         self::ROTATOR_URL,
         self::MOTOR,
@@ -59,6 +61,7 @@ class Request
         self::DESKTOP_USER_AGENT,
         self::WEB_DRIVER_HOST,
         self::CHROME_DRIVER,
+        self::SQUID_ADDRESSES,
     ];
 
     private const DEFAULTS = [
@@ -76,10 +79,10 @@ class Request
     public function validate(): string
     {
         $this->validateUrl()
-            && $this->validateProxyAddress()
-            && $this->validateProxyAuth()
+            && $this->validateProxy()
+            && $this->validateProxies()
             && $this->validateRotatorUrl()
-            && $this->validateRotatorProxies()
+            && $this->validateSquidProxies()
             && $this->validateMotor();
 
         return $this->error;
@@ -107,7 +110,7 @@ class Request
 
     public function getRotatorProxies(): array
     {
-        return $this->getArrayParam(self::ROTATOR_PROXIES);
+        return $this->getArrayParam(self::PROXIES);
     }
 
     public function getWebDriverHost(): string
@@ -115,9 +118,25 @@ class Request
         return $this->getParam(self::WEB_DRIVER_HOST);
     }
 
-    public function getProxyAddress(): string
+    public function removeProxyAddress()
     {
-        return $this->getParam(self::PROXY_ADDRESS);
+        if (isset($this->cliParams[self::PROXY])) {
+            $this->cliParams[self::PROXY];
+        }
+
+        if (isset($this->params[self::PROXY])) {
+            $this->params[self::PROXY];
+        }
+    }
+
+    public function hasProxyAddress(): bool
+    {
+        return $this->hasParam(self::PROXY);
+    }
+
+    public function getProxy(): string
+    {
+        return $this->getParam(self::PROXY);
     }
 
     public function getProxyAuth(): string
@@ -145,6 +164,10 @@ class Request
             if ($this->getMotor() == Request::MOTOR_CHROME) {
                 return new Chrome($this);
             }
+
+            if ($this->getMotor() == Request::MOTOR_FIREFOX) {
+                return new Firefox($this);
+            }
         } catch (\Exception $e) {
             $climate = new CLImate();
             $climate->error($e->getMessage());
@@ -152,9 +175,18 @@ class Request
         }
     }
 
+    public function hasParam(string $name): bool
+    {
+        if (isset($this->cliParams[$name])) {
+            return true;
+        }
+
+        return isset($this->getParams()[trim($name)]);
+    }
+
     public function getParam(string $name): string
     {
-        return $this->getParams()[trim($name)] ?? '';
+        return trim($this->getParams()[trim($name)] ?? '');
     }
 
     public function getArrayParam(string $name): array
@@ -204,6 +236,16 @@ class Request
         return $params;
     }
 
+    public function getChromeDriver(): string
+    {
+        return $this->getParam(self::CHROME_DRIVER);
+    }
+
+    public function getSquidAddresses(): array
+    {
+        return $this->getArrayParam(self::SQUID_ADDRESSES);
+    }
+
     private function validateUrl(): bool
     {
         if ($this->params[self::URL]) {
@@ -212,7 +254,7 @@ class Request
             $host = $parsed['host'] ?? '';
             $path = $parsed['path'] ?? '';
             $query = $parsed['query'] ?? '';
-            $fullUrl = $scheme . '://' . $host . $path . ($query ? $query : '');
+            $fullUrl = $scheme . '://' . $host . $path . ($query ? '?' . $query : '');
             if (!filter_var($fullUrl, FILTER_VALIDATE_URL)) {
                 $this->error = 'Невалидный URL';
             }
@@ -223,46 +265,53 @@ class Request
         return $this->error ? false : true;
     }
 
-    private function validateProxyAddress(): bool
+    private function validateProxy(): bool
     {
-        if (isset($this->params[self::PROXY_ADDRESS])) {
-            $parts = explode(':', $this->params[self::PROXY_ADDRESS]);
-            $ip = $parts[0] ?? '';
-            $port = $parts[1] ?? '';
-            if ($ip && !filter_var($ip, FILTER_VALIDATE_IP)) {
-                $this->error = 'Невалидный IP прокси';
-            } elseif ($port && !is_numeric($port)) {
-                $this->error = 'Невалидный порт прокси';
-            }
+        if (isset($this->params[self::PROXY])) {
+            $this->error = $this->validateAddress($this->params[self::PROXY]);
         }
 
         return $this->error ? false : true;
     }
 
-    private function validateProxyAuth(): bool
+//    private function validateProxyAuth(): bool
+//    {
+//        if (isset($this->params[self::PROXY_AUTH])) {
+//            $parts = explode(':', $this->params[self::PROXY_AUTH]);
+//            $login = $parts[0] ?? '';
+//            $password = $parts[1] ?? '';
+//            if ($login && !$password) {
+//                $this->error = 'Укажите пароль';
+//            }
+//        }
+//
+//        return $this->error ? false : true;
+//    }
+
+    private function validateSquidProxies(): bool
     {
-        if (isset($this->params[self::PROXY_AUTH])) {
-            $parts = explode(':', $this->params[self::PROXY_AUTH]);
-            $login = $parts[0] ?? '';
-            $password = $parts[1] ?? '';
-            if ($login && !$password) {
-                $this->error = 'Укажите пароль';
+        if (isset($this->params[self::SQUID_ADDRESSES])) {
+            foreach ($this->params[self::SQUID_ADDRESSES] as $squidAddress) {
+                if ($this->error = $this->validateAddress($squidAddress)) {
+                    return false;
+                }
             }
         }
 
-        return $this->error ? false : true;
+        return true;
     }
 
-    private function validateRotatorProxies(): bool
+    private function validateProxies(): bool
     {
-        if (isset($this->params[self::ROTATOR_PROXIES])
-            && $this->params[self::ROTATOR_PROXIES]
-        ) {
-
-            $this->error = 'Невалидный url ротатора: ' . $this->params[self::ROTATOR_URL];
+        if (isset($this->params[self::PROXIES])) {
+            foreach ($this->params[self::PROXIES] as $proxyAddress) {
+                if ($this->error = $this->validateAddress($proxyAddress)) {
+                    return false;
+                }
+            }
         }
 
-        return $this->error ? false : true;
+        return true;
     }
 
     private function validateRotatorUrl(): bool
@@ -309,8 +358,19 @@ class Request
         return getopt('', $cliNames);
     }
 
-    public function getChromeDriver(): string
+    private function validateAddress(string $address): string
     {
-        return $this->getParam(self::CHROME_DRIVER);
+        $parsed = parse_url($address);
+        $port = $parsed['port'] ?? '';
+        $ip = $parsed['host'] ?? '';
+        $login = $parsed['user'] ?? '';
+        $password = $parsed['pass'] ?? '';
+        if ($ip && !filter_var($ip, FILTER_VALIDATE_IP) && $ip != 'localhost') {
+            $error = 'Невалидный IP прокси';
+        } elseif ($port && !is_numeric($port)) {
+            $error = 'Невалидный порт прокси';
+        }
+
+        return $error ?? '';
     }
 }

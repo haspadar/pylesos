@@ -14,19 +14,20 @@ class Curl implements MotorInterface
     {
         $ch = curl_init();
         $curlOptions = $this->getCurlOptions($url);
+        $proxy = $rotator->popProxy();
+        if ($proxy) {
+            $curlOptions['CURLOPT_PROXY'] = $proxy->getAddress();
+            if ($proxy->getAuth()) {
+                $curlOptions['CURLOPT_PROXYUSERPWD'] = $proxy->getAuth();
+            }
+        }
+
         foreach ($curlOptions as $optionName => $optionValue) {
             if ($this->request->canConvertToArray($optionValue)) {
                 curl_setopt($ch, constant($optionName), $this->request->parseArrayParam($optionValue));
             } else {
                 curl_setopt($ch, constant($optionName), $optionValue);
             }
-        }
-
-        $proxy = $rotator->popProxy();
-        if ($proxy) {
-            curl_setopt($ch, CURLOPT_PROXY, $proxy->getAddress());
-            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy->getAuth());
-
         }
 
         $curlResponse = curl_exec($ch);
@@ -45,8 +46,10 @@ class Curl implements MotorInterface
         );
         if ($this->request->isDebug()) {
             $response->setDebug([
+                'options' => $this->request->getParams(),
                 'curl_options' => $curlOptions,
-                'info' => $info
+                'info' => $info,
+                'curl_response' => $curlResponse
             ]);
         }
 

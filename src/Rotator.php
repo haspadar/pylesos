@@ -10,8 +10,12 @@ class Rotator
     public function __construct(Request $request)
     {
         $this->request = $request;
-        if ($request->getProxyAddress()) {
-            $this->proxies = [new Proxy($request->getProxyAddress(), $request->getProxyAuth())];
+        if ($request->getSquidAddresses()) {
+            $squid = new Squid($request->getSquidAddresses());
+        } elseif ($request->hasProxyAddress() && !$request->getProxy()) {
+            $this->proxies = [];
+        } elseif ($request->getProxy()) {
+            $this->proxies = [new Proxy($request->getProxy(), $request->getProxyAuth())];
         } elseif ($request->getRotatorUrl()) {
             $this->proxies = $this->getList($request->getRotatorUrl());
         } elseif ($request->getRotatorProxies()) {
@@ -19,12 +23,17 @@ class Rotator
         }
     }
 
+//    public function getRequest(): Request
+//    {
+//        return $this->request;
+//    }
+
     public function popProxy(): ?Proxy
     {
         return $this->proxies ? array_pop($this->proxies) : null;
     }
 
-    private function getList(string $rotatorUrl): array
+    public function getList(string $rotatorUrl): array
     {
         $response = json_decode(file_get_contents($rotatorUrl));
         $list = [];

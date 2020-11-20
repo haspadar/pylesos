@@ -10,8 +10,8 @@ class Pylesos
         $this->motor = $motor;
     }
 
-    public function download(string $url, Rotator $rotator): Response
+    public function download(string $url, Rotator $rotator, Squid $squid): Response
     {
-        return $this->motor->download($url, $rotator);
+        return $this->motor->download($url, $rotator, $squid);
     }
 }
