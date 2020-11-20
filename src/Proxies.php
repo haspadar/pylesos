@@ -8,19 +8,21 @@ class Proxies
     {
         if ($request->getProxy()) {
             $addresses = [$request->getProxy()];
-        } elseif ($request->getRotatorProxies()) {
-            $addresses = $request->getRotatorProxies();
+        } elseif ($request->getProxies()) {
+            $addresses = $request->getProxies();
         } elseif ($request->getRotatorUrl()) {
             $addresses = self::getRotatorAddresses($request->getRotatorUrl());
+        } else {
+            $addresses = [];
         }
 
-        if ($request->getSquidAddresses()) {
-            $squid = new Squid($request->getSquidAddresses(), $addresses ?? []);
+        if ($request->hasSquid()) {
+            $squid = new Squid($addresses);
 
             return $squid->getAddresses();
         }
 
-        return $addresses ?? [];
+        return $addresses;
     }
 
     public static function generateProxies(array $addresses): array
@@ -31,11 +33,6 @@ class Proxies
         }
 
         return $proxies;
-    }
-
-    public static function generateFromRotatorUrl(): array
-    {
-
     }
 
     private static function getRotatorAddresses(string $apiUrl): array

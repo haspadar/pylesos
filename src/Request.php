@@ -38,7 +38,7 @@ class Request
 
     private const CHROME_DRIVER = 'chrome_driver';
 
-    private const SQUID_ADDRESSES = 'squid_addresses';
+    private const SQUID = 'squid';
 
     private array $cliParams;
 
@@ -61,7 +61,7 @@ class Request
         self::DESKTOP_USER_AGENT,
         self::WEB_DRIVER_HOST,
         self::CHROME_DRIVER,
-        self::SQUID_ADDRESSES,
+        self::SQUID,
     ];
 
     private const DEFAULTS = [
@@ -82,8 +82,8 @@ class Request
             && $this->validateProxy()
             && $this->validateProxies()
             && $this->validateRotatorUrl()
-            && $this->validateSquidProxies()
-            && $this->validateMotor();
+            && $this->validateMotor()
+            && $this->validateSquidPermissions();
 
         return $this->error;
     }
@@ -108,7 +108,7 @@ class Request
         return $this->getArrayParam(self::BAN_WORDS);
     }
 
-    public function getRotatorProxies(): array
+    public function getProxies(): array
     {
         return $this->getArrayParam(self::PROXIES);
     }
@@ -129,19 +129,9 @@ class Request
         }
     }
 
-    public function hasProxyAddress(): bool
-    {
-        return $this->hasParam(self::PROXY);
-    }
-
     public function getProxy(): string
     {
         return $this->getParam(self::PROXY);
-    }
-
-    public function getProxyAuth(): string
-    {
-        return $this->getParam(self::PROXY_AUTH);
     }
 
     public function getMotor(): string
@@ -154,7 +144,7 @@ class Request
         return $this->getParam(self::URL);
     }
 
-    public function generateMotor(): MotorInterface
+    public function generateMotor(): ?MotorInterface
     {
         try {
             if ($this->getMotor() == Request::MOTOR_CURL) {
@@ -171,17 +161,9 @@ class Request
         } catch (\Exception $e) {
             $climate = new CLImate();
             $climate->error($e->getMessage());
-            exit;
-        }
-    }
-
-    public function hasParam(string $name): bool
-    {
-        if (isset($this->cliParams[$name])) {
-            return true;
         }
 
-        return isset($this->getParams()[trim($name)]);
+        return null;
     }
 
     public function getParam(string $name): string
@@ -241,9 +223,9 @@ class Request
         return $this->getParam(self::CHROME_DRIVER);
     }
 
-    public function getSquidAddresses(): array
+    public function hasSquid(): bool
     {
-        return $this->getArrayParam(self::SQUID_ADDRESSES);
+        return $this->getParam(self::SQUID);
     }
 
     private function validateUrl(): bool
@@ -272,33 +254,6 @@ class Request
         }
 
         return $this->error ? false : true;
-    }
-
-//    private function validateProxyAuth(): bool
-//    {
-//        if (isset($this->params[self::PROXY_AUTH])) {
-//            $parts = explode(':', $this->params[self::PROXY_AUTH]);
-//            $login = $parts[0] ?? '';
-//            $password = $parts[1] ?? '';
-//            if ($login && !$password) {
-//                $this->error = 'Укажите пароль';
-//            }
-//        }
-//
-//        return $this->error ? false : true;
-//    }
-
-    private function validateSquidProxies(): bool
-    {
-        if (isset($this->params[self::SQUID_ADDRESSES])) {
-            foreach ($this->params[self::SQUID_ADDRESSES] as $squidAddress) {
-                if ($this->error = $this->validateAddress($squidAddress)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     private function validateProxies(): bool
@@ -372,5 +327,23 @@ class Request
         }
 
         return $error ?? '';
+    }
+
+    private function validateSquidPermissions()
+    {
+        if ($this->hasSquid()) {
+            if (!$this->isRoot()) {
+                $this->error = 'Нужны права root для squid';
+            } elseif (!$this->getProxy() && !$this->getProxies() && !$this->getRotatorUrl()) {
+                $this->error = 'Не найдены настройки прокси для squid';
+            }
+        }
+
+        return $this->error ? false : true;
+    }
+
+    private function isRoot(): bool
+    {
+        return posix_getuid() == 0;
     }
 }

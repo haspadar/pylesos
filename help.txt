@@ -1,0 +1,15 @@
+Chrome
+
+Фикс ошибки X11 при запуске webdriver: sudo apt-get install gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
+Установка Chrome binary: wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+sudo apt-get update
+sudo apt install google-chrome-stable
+apt-get install xvfb
+Запуск: установить google-chrome или chromium, запустить в фоне соответствующий sources/chromedriver_linux64 (обычно на порту 9515), настроить Squid для работы с прокси без логина и пароля
+
+Squid
+
+статья про то, что в headless прокси с паролем указать нельзя, и как настроить Squid: https://superuser.com/questions/1438057/accessing-internet-behind-proxy-in-headless-ubuntu-where-proxy-requires-login-th
+решение https://stackoverflow.com/questions/48427498/how-to-use-proxy-with-authentication-in-headless-chorme-browser-using-selenium-a
+несколько портов для squid: https://stackoverflow.com/questions/45966359/squid-listen-on-multiple-ports-and-forward-to-different-proxy

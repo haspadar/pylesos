@@ -18,7 +18,7 @@ class Curl implements MotorInterface
         if ($proxy) {
             $curlOptions['CURLOPT_PROXY'] = $proxy->getAddress();
             if ($proxy->getAuth()) {
-                $curlOptions['CURLOPT_PROXYUSERPWD'] = $proxy->getAuth();
+//                $curlOptions['CURLOPT_PROXYUSERPWD'] = $proxy->getAuth();
             }
         }
 

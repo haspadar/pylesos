@@ -2,6 +2,7 @@
 <?php
 
 use Dotenv\Dotenv;
+use Pylesos\Proxies;
 use Pylesos\Pylesos;
 use Pylesos\Request;
 use Pylesos\Rotator;
@@ -13,9 +14,16 @@ $dotenv = Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
 $request = new Request($_ENV);
 if (!$error = $request->validate()) {
-    $pylesos = new Pylesos($request->generateMotor());
-    $response = $pylesos->download($request->getUrl(), new Rotator($request), new Squid($request));
-    $response->colorize();
+    $motor = $request->generateMotor();
+    if ($motor) {
+        $rotator = new Rotator($request);
+        $pylesos = new Pylesos($motor, $rotator);
+        $response = $pylesos->download($request->getUrl());
+        $response->colorize();
+    } else {
+        echo 'Motor not found' . PHP_EOL;
+    }
+
 } else {
     echo $error . PHP_EOL;
 }
