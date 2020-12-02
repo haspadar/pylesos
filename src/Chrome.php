@@ -38,7 +38,7 @@ class Chrome implements MotorInterface
             $chromeResponse,
             0,
             '',
-            $squidProxy = $rotator->popProxy(),
+            $proxy,
             $this->request
         );
         if ($this->request->isDebug()) {

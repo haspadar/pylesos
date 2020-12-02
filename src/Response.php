@@ -27,6 +27,21 @@ class Response
     {
         $this->debug = $debug;
     }
+    
+    public function getCode(): int 
+    {
+        return $this->code;
+    }
+    
+    public function getError(): string 
+    {
+        return $this->error;
+    }
+    
+    public function getResponse(): string
+    {
+        return $this->response;
+    }
 
     public function __toString(): string
     {

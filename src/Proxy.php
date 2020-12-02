@@ -41,6 +41,11 @@ class Proxy
         return $this->address;
     }
 
+    public function getLogin(): string
+    {
+        return $this->login;
+    }
+
     public function getIp(): string
     {
         return $this->ip;
@@ -54,5 +59,10 @@ class Proxy
     public function getAuth(): string
     {
         return $this->auth;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
     }
 }

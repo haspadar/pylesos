@@ -43,6 +43,8 @@ class Proxies
             $list[] = $rotatorProxy->auth . '@' . $rotatorProxy->address;
         }
 
+        shuffle($list);
+
         return $list;
     }
 }

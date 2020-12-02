@@ -12,7 +12,7 @@ require dirname(__FILE__) . '/../vendor/autoload.php';
 
 $dotenv = Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
-$request = new Request($_ENV);
+$request = new Request();
 if (!$error = $request->validate()) {
     $motor = $request->generateMotor();
     if ($motor) {

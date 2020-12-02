@@ -17,8 +17,9 @@
         "ext-zip": "*",
         "vlucas/phpdotenv": "^5.1",
         "ext-json": "*",
-        "league/climate": "dev-master",
-        "php-webdriver/webdriver": "1.8.x-dev"
+        "league/climate": "^3.5",
+        "php-webdriver/webdriver": "1.8.x-dev",
+        "nesk/puphpeteer": "dev-master"
     },
     "autoload": {
         "psr-4": {

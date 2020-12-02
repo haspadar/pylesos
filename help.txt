@@ -13,3 +13,10 @@ Squid
 статья про то, что в headless прокси с паролем указать нельзя, и как настроить Squid: https://superuser.com/questions/1438057/accessing-internet-behind-proxy-in-headless-ubuntu-where-proxy-requires-login-th
 решение https://stackoverflow.com/questions/48427498/how-to-use-proxy-with-authentication-in-headless-chorme-browser-using-selenium-a
 несколько портов для squid: https://stackoverflow.com/questions/45966359/squid-listen-on-multiple-ports-and-forward-to-different-proxy
+
+
+Puppeter
+
+sudo apt install nodejs
+sudo apt install npm
+sudo npm install @nesk/puphpeteer

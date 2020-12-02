@@ -10,7 +10,7 @@ class Request
 
     public const MOTOR_CHROME = 'chrome';
 
-    public const MOTOR_FIREFOX = 'firefox';
+    public const MOTOR_PUPPETEER = 'puppeteer';
 
     private const URL = 'url';
 
@@ -69,10 +69,10 @@ class Request
         self::DEBUG => 0
     ];
 
-    public function __construct(array $env)
+    public function __construct()
     {
         $this->cliParams = $this->filterCliParams();
-        $this->envParams = $this->filterEnvParams($env);
+        $this->envParams = $this->filterEnvParams();
         $this->params = array_replace(self::DEFAULTS, $this->envParams, $this->cliParams);
     }
 
@@ -83,7 +83,8 @@ class Request
             && $this->validateProxies()
             && $this->validateRotatorUrl()
             && $this->validateMotor()
-            && $this->validateSquidPermissions();
+            && $this->validateSquidPermissions()
+            && $this->validatePuppeteerInstalled();
 
         return $this->error;
     }
@@ -155,8 +156,8 @@ class Request
                 return new Chrome($this);
             }
 
-            if ($this->getMotor() == Request::MOTOR_FIREFOX) {
-                return new Firefox($this);
+            if ($this->getMotor() == Request::MOTOR_PUPPETEER) {
+                return new Puppeteer($this);
             }
         } catch (\Exception $e) {
             $climate = new CLImate();
@@ -240,9 +241,10 @@ class Request
             if (!filter_var($fullUrl, FILTER_VALIDATE_URL)) {
                 $this->error = 'Невалидный URL';
             }
-        } else {
-            $this->error = 'Укажите URL';
         }
+//        else {
+//            $this->error = 'Укажите URL';
+//        }
 
         return $this->error ? false : true;
     }
@@ -286,18 +288,18 @@ class Request
         if ($this->params[self::MOTOR] && !in_array($this->params[self::MOTOR], [
             self::MOTOR_CURL,
             self::MOTOR_CHROME,
-            self::MOTOR_FIREFOX
+            self::MOTOR_PUPPETEER
         ])) {
-            $this->error = 'Невалидный мотор: допускаются curl, chrome, firefox';
+            $this->error = 'Не найден мотор: допускаются curl, chrome, puppeteer';
         }
 
         return $this->error ? false : true;
     }
 
-    private function filterEnvParams(array $env): array
+    private function filterEnvParams(): array
     {
         $envParams = [];
-        foreach ($env as $name => $value) {
+        foreach ($_ENV as $name => $value) {
             $lowerName = strtolower($name);
             $filteredName = in_array($lowerName, self::CLI_NAMES) ? $lowerName : $name;
             $envParams[$filteredName] = $value;
@@ -345,5 +347,31 @@ class Request
     private function isRoot(): bool
     {
         return posix_getuid() == 0;
+    }
+
+    private function isPackageInstalled(string $package): bool
+    {
+        $result = shell_exec("dpkg -l | grep $package");
+
+        return strlen($result) > 0;
+    }
+
+    private function validatePuppeteerInstalled(): bool
+    {
+        if ($this->getMotor() == self::MOTOR_PUPPETEER && !$this->isPackageInstalled('nodejs')) {
+            $this->error = 'Не установлен nodejs: sudo apt install nodejs';
+        } elseif ($this->getMotor() == self::MOTOR_PUPPETEER && !$this->isNpmInstalled()) {
+            $this->error = 'Не установлен npm: sudo apt install npm && sudo npm install @nesk/puphpeteer';
+        }
+
+        return $this->error ? false : true;
+    }
+
+    private function isNpmInstalled(): bool
+    {
+        $response = trim(shell_exec('npm -version'));
+        $responseParts = explode('.', $response);
+
+        return count($responseParts) == 3;
     }
 }
