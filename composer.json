@@ -21,6 +21,7 @@
         "php-webdriver/webdriver": "1.8.x-dev",
         "nesk/puphpeteer": "dev-master"
     },
+    "bin": ["bin/pylesos.php"],
     "autoload": {
         "psr-4": {
             "Pylesos\\": "src/"
