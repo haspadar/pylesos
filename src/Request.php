@@ -2,6 +2,7 @@
 
 namespace Pylesos;
 
+use Dotenv\Dotenv;
 use League\CLImate\CLImate;
 
 class Request
@@ -69,10 +70,10 @@ class Request
         self::DEBUG => 0
     ];
 
-    public function __construct()
+    public function __construct(array $env)
     {
         $this->cliParams = $this->filterCliParams();
-        $this->envParams = $this->filterEnvParams();
+        $this->envParams = $this->filterEnvParams($env);
         $this->params = array_replace(self::DEFAULTS, $this->envParams, $this->cliParams);
     }
 
@@ -296,10 +297,10 @@ class Request
         return $this->error ? false : true;
     }
 
-    private function filterEnvParams(): array
+    private function filterEnvParams(array $env): array
     {
         $envParams = [];
-        foreach ($_ENV as $name => $value) {
+        foreach ($env as $name => $value) {
             $lowerName = strtolower($name);
             $filteredName = in_array($lowerName, self::CLI_NAMES) ? $lowerName : $name;
             $envParams[$filteredName] = $value;
