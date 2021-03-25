@@ -6,9 +6,8 @@ use Pylesos\Pylesos;
 use Pylesos\Request;
 use Pylesos\Rotator;
 
-loadAutoload();
-
-$dotenv = Dotenv::createImmutable(dirname(__DIR__));
+$vendorPath = loadAutoload();
+$dotenv = Dotenv::createImmutable(dirname($vendorPath));
 $env = $dotenv->load();
 $request = new Request($env);
 if (!$error = $request->validate()) {
@@ -26,16 +25,20 @@ if (!$error = $request->validate()) {
     echo $error . PHP_EOL;
 }
 
-function loadAutoload(): void {
-    $autoloadPaths = [
+function loadAutoload(): string {
+    $vendorPaths = [
         dirname(dirname(__FILE__)) . '/vendor',
         dirname(dirname(dirname(dirname(__FILE__))))
     ];
-    foreach ($autoloadPaths as $autoloadPath) {
-        if (file_exists($autoloadPath . '/autoload.php')) {
-            require_once $autoloadPath . '/autoload.php';
+    foreach ($vendorPaths as $vendorPath) {
+        if (file_exists($vendorPath . '/autoload.php')) {
+            require_once $vendorPath . '/autoload.php';
+
+            return $vendorPath;
         }
     }
+
+    return '';
 }
 
 function isVendorDirectory(string $directory): bool {
