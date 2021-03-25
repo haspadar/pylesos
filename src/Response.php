@@ -6,8 +6,11 @@ use League\CLImate\CLImate;
 class Response
 {
     private string $response;
+
     private int $code;
+
     private string $error;
+
     private array $debug = [];
 
     private ?Proxy $proxy;
@@ -38,6 +41,11 @@ class Response
         return $this->error;
     }
     
+    public function getProxy(): Proxy
+    {
+        return $this->proxy;
+    }
+
     public function getResponse(): string
     {
         return $this->response;

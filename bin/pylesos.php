@@ -7,6 +7,7 @@ use Pylesos\Request;
 use Pylesos\Rotator;
 
 loadAutoload();
+
 $dotenv = Dotenv::createImmutable(dirname(__DIR__));
 $env = $dotenv->load();
 $request = new Request($env);
