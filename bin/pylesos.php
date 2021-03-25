@@ -8,8 +8,7 @@ use Pylesos\Request;
 use Pylesos\Rotator;
 use Pylesos\Squid;
 
-require dirname(__FILE__) . '/../vendor/autoload.php';
-
+loadAutoload();
 $dotenv = Dotenv::createImmutable(dirname(__DIR__));
 $env = $dotenv->load();
 $request = new Request($env);
@@ -26,4 +25,19 @@ if (!$error = $request->validate()) {
 
 } else {
     echo $error . PHP_EOL;
+}
+
+function loadAutoload(): void {
+    $dynamicPath = dirname(__FILE__);
+    while (!isVendorDirectory($dynamicPath)) {
+        $dynamicPath = dirname($dynamicPath);
+    }
+
+    require_once $dynamicPath . '/autoload.php';
+}
+
+function isVendorDirectory(string $directory): bool {
+    $parts = explode('/', $directory);
+
+    return $parts[count($parts) - 1] == 'vendor';
 }
