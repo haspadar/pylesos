@@ -3,9 +3,9 @@ use Dotenv\Dotenv;
 use Pylesos\PylesosService;
 use Pylesos\Scheduler;
 
-require 'vendor/autoload.php';
+require '../vendor/autoload.php';
 
-$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv::createImmutable(dirname(__DIR__));
 $env = $dotenv->load();
 $scheduler = new Scheduler($env);
 $scheduler->run(function () use ($env) {
