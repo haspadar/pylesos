@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "620753a2676f3eb0bd3bcf3d65e8de05",
+    "content-hash": "7e50fea3d2c05a4e87448731cb5e2a17",
     "packages": [
         {
             "name": "clue/socket-raw",
@@ -338,12 +338,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-webdriver/php-webdriver.git",
-                "reference": "d5dc361748d9196acbbda3b51bd97550ff76828d"
+                "reference": "101fedbd7877f35b1234f3baf94eaac055278091"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-webdriver/php-webdriver/zipball/d5dc361748d9196acbbda3b51bd97550ff76828d",
-                "reference": "d5dc361748d9196acbbda3b51bd97550ff76828d",
+                "url": "https://api.github.com/repos/php-webdriver/php-webdriver/zipball/101fedbd7877f35b1234f3baf94eaac055278091",
+                "reference": "101fedbd7877f35b1234f3baf94eaac055278091",
                 "shasum": ""
             },
             "require": {
@@ -402,7 +402,7 @@
                 "issues": "https://github.com/php-webdriver/php-webdriver/issues",
                 "source": "https://github.com/php-webdriver/php-webdriver/tree/main"
             },
-            "time": "2021-03-05T19:05:06+00:00"
+            "time": "2021-03-21T23:42:43+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -579,6 +579,131 @@
                 "source": "https://github.com/Seldaek/cli-prompt/tree/1.0.4"
             },
             "time": "2020-12-15T21:32:01+00:00"
+        },
+        {
+            "name": "sergeytsalkov/meekrodb",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SergeyTsalkov/meekrodb.git",
+                "reference": "03ff51a997d68ca308b7f9538a17b3fa5cd92686"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SergeyTsalkov/meekrodb/zipball/03ff51a997d68ca308b7f9538a17b3fa5cd92686",
+                "reference": "03ff51a997d68ca308b7f9538a17b3fa5cd92686",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "db.class.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Sergey Tsalkov",
+                    "email": "stsalkov@gmail.com"
+                }
+            ],
+            "description": "The Simple PHP/MySQL Library",
+            "homepage": "http://www.meekro.com",
+            "keywords": [
+                "database",
+                "mysql",
+                "mysqli",
+                "pdo"
+            ],
+            "support": {
+                "email": "support@meekro.com",
+                "issues": "https://github.com/SergeyTsalkov/meekrodb/issues",
+                "source": "https://github.com/SergeyTsalkov/meekrodb/tree/master"
+            },
+            "time": "2021-01-24T04:27:10+00:00"
+        },
+        {
+            "name": "simplehtmldom/simplehtmldom",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/simplehtmldom/simplehtmldom.git",
+                "reference": "31ce157e7ba0c6ca35f94faedf031a945c3f6427"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/simplehtmldom/simplehtmldom/zipball/31ce157e7ba0c6ca35f94faedf031a945c3f6427",
+                "reference": "31ce157e7ba0c6ca35f94faedf031a945c3f6427",
+                "shasum": ""
+            },
+            "require": {
+                "ext-iconv": "*",
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6 || ^7"
+            },
+            "suggest": {
+                "ext-curl": "Needed to support cURL downloads in class HtmlWeb",
+                "ext-mbstring": "Allows better decoding for multi-byte documents",
+                "ext-openssl": "Allows loading HTTPS pages when using cURL"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "./"
+                ],
+                "exclude-from-classmap": [
+                    "/example/",
+                    "/manual/",
+                    "/testcase/",
+                    "/tests/",
+                    "simple_html_dom.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "S.C. Chen",
+                    "role": "Developer"
+                },
+                {
+                    "name": "John Schlick",
+                    "role": "Developer"
+                },
+                {
+                    "name": "logmanoriginal",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A fast, simple and reliable HTML document parser for PHP.",
+            "homepage": "https://simplehtmldom.sourceforge.io/",
+            "keywords": [
+                "Simple",
+                "dom",
+                "html",
+                "parser",
+                "php",
+                "simplehtmldom"
+            ],
+            "support": {
+                "issues": "https://sourceforge.net/p/simplehtmldom/bugs/",
+                "rss": "https://sourceforge.net/p/simplehtmldom/news/feed.rss",
+                "source": "https://sourceforge.net/p/simplehtmldom/repository/",
+                "wiki": "https://simplehtmldom.sourceforge.io/docs/"
+            },
+            "time": "2019-12-06T18:20:19+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -831,12 +956,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "b8d6eff26e48187fed15970799f4b605fa7242e4"
+                "reference": "313a38f09c77fbcdc1d223e57d368cea76a2fd2f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/b8d6eff26e48187fed15970799f4b605fa7242e4",
-                "reference": "b8d6eff26e48187fed15970799f4b605fa7242e4",
+                "url": "https://api.github.com/repos/symfony/process/zipball/313a38f09c77fbcdc1d223e57d368cea76a2fd2f",
+                "reference": "313a38f09c77fbcdc1d223e57d368cea76a2fd2f",
                 "shasum": ""
             },
             "require": {
@@ -870,7 +995,7 @@
             "description": "Executes commands in sub-processes",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/process/tree/5.x"
+                "source": "https://github.com/symfony/process/tree/v5.2.4"
             },
             "funding": [
                 {
@@ -886,7 +1011,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-14T15:42:36+00:00"
+            "time": "2021-01-27T10:15:41+00:00"
         },
         {
             "name": "vierbergenlars/php-semver",
@@ -950,12 +1075,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/phpdotenv.git",
-                "reference": "b3eac5c7ac896e52deab4a99068e3f4ab12d9e56"
+                "reference": "b740396414a95cbe868bf7f168f997fe16d970d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/b3eac5c7ac896e52deab4a99068e3f4ab12d9e56",
-                "reference": "b3eac5c7ac896e52deab4a99068e3f4ab12d9e56",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/b740396414a95cbe868bf7f168f997fe16d970d6",
+                "reference": "b740396414a95cbe868bf7f168f997fe16d970d6",
                 "shasum": ""
             },
             "require": {
@@ -1011,7 +1136,7 @@
             ],
             "support": {
                 "issues": "https://github.com/vlucas/phpdotenv/issues",
-                "source": "https://github.com/vlucas/phpdotenv/tree/v5.3.0"
+                "source": "https://github.com/vlucas/phpdotenv/tree/master"
             },
             "funding": [
                 {
@@ -1023,7 +1148,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-20T15:23:13+00:00"
+            "time": "2021-03-24T22:04:11+00:00"
         }
     ],
     "packages-dev": [],
@@ -1031,7 +1156,9 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "php-webdriver/webdriver": 20,
-        "nesk/puphpeteer": 20
+        "nesk/puphpeteer": 20,
+        "simplehtmldom/simplehtmldom": 20,
+        "sergeytsalkov/meekrodb": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

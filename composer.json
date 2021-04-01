@@ -19,7 +19,9 @@
         "ext-json": "*",
         "league/climate": "^3.5",
         "php-webdriver/webdriver": "1.8.x-dev",
-        "nesk/puphpeteer": "dev-master"
+        "nesk/puphpeteer": "dev-master",
+        "simplehtmldom/simplehtmldom": "9999999-dev",
+        "sergeytsalkov/meekrodb": "9999999-dev"
     },
     "bin": ["bin/pylesos.php"],
     "autoload": {
