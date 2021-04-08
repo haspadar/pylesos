@@ -16,10 +16,6 @@ $scheduler->run(function () use ($env, $db) {
     foreach ($doc->find('h3.ban') as $level1) {
         $title = strip_tags($level1->find('a span', 0)->innertext);
         $url = $level1->find('a', 0)->href;
-        var_dump([
-            'title' => $title,
-            'url' => $url
-        ]);
         $db->insertIgnore('categories', [
             'title' => $title,
             'donor_url' => $url,
@@ -27,5 +23,10 @@ $scheduler->run(function () use ($env, $db) {
             'create_time' => (new DateTime())->format('Y-m-d H:i:s')
         ]);
         $level1Id = $db->insertId();
+        var_dump([
+            'id' => $level1Id,
+            'title' => $title,
+            'url' => $url
+        ]);
     }
 });
