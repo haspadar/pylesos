@@ -1,1 +1,0 @@
-../vendor/vrana/adminer/index.php
