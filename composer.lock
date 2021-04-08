@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5f321c07a9f9b159479e2f26e415f2ad",
+    "content-hash": "7e50fea3d2c05a4e87448731cb5e2a17",
     "packages": [
         {
             "name": "clue/socket-raw",
@@ -956,12 +956,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "313a38f09c77fbcdc1d223e57d368cea76a2fd2f"
+                "reference": "98cb8eeb72e55d4196dd1e36f1f16e7b3a9a088e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/313a38f09c77fbcdc1d223e57d368cea76a2fd2f",
-                "reference": "313a38f09c77fbcdc1d223e57d368cea76a2fd2f",
+                "url": "https://api.github.com/repos/symfony/process/zipball/98cb8eeb72e55d4196dd1e36f1f16e7b3a9a088e",
+                "reference": "98cb8eeb72e55d4196dd1e36f1f16e7b3a9a088e",
                 "shasum": ""
             },
             "require": {
@@ -995,7 +995,7 @@
             "description": "Executes commands in sub-processes",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/process/tree/v5.2.4"
+                "source": "https://github.com/symfony/process/tree/5.x"
             },
             "funding": [
                 {
@@ -1011,7 +1011,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-27T10:15:41+00:00"
+            "time": "2021-04-08T10:27:02+00:00"
         },
         {
             "name": "vierbergenlars/php-semver",
@@ -1149,60 +1149,6 @@
                 }
             ],
             "time": "2021-03-24T22:04:11+00:00"
-        },
-        {
-            "name": "vrana/adminer",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/vrana/adminer.git",
-                "reference": "f6880b59d6ab40444407616701c1376c90aba5a5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/vrana/adminer/zipball/f6880b59d6ab40444407616701c1376c90aba5a5",
-                "reference": "f6880b59d6ab40444407616701c1376c90aba5a5",
-                "shasum": ""
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "plugins/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0",
-                "GPL-2.0-only"
-            ],
-            "authors": [
-                {
-                    "name": "Jakub Vrána",
-                    "homepage": "https://www.vrana.cz/"
-                }
-            ],
-            "description": "Database management in a single PHP file.",
-            "homepage": "https://www.adminer.org/",
-            "keywords": [
-                "database"
-            ],
-            "support": {
-                "forum": "https://sourceforge.net/p/adminer/discussion/",
-                "issues": "https://sourceforge.net/p/adminer/bugs-and-features/",
-                "source": "https://github.com/vrana/adminer/"
-            },
-            "funding": [
-                {
-                    "url": "https://sourceforge.net/p/adminer/donate/",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/jakubvrana",
-                    "type": "patreon"
-                }
-            ],
-            "time": "2021-03-03T10:17:32+00:00"
         }
     ],
     "packages-dev": [],
@@ -1212,8 +1158,7 @@
         "php-webdriver/webdriver": 20,
         "nesk/puphpeteer": 20,
         "simplehtmldom/simplehtmldom": 20,
-        "sergeytsalkov/meekrodb": 20,
-        "vrana/adminer": 20
+        "sergeytsalkov/meekrodb": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
