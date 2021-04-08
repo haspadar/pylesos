@@ -9,7 +9,8 @@ require '../vendor/autoload.php';
 $dotenv = Dotenv::createImmutable(dirname(__DIR__));
 $env = $dotenv->load();
 $scheduler = new Scheduler($env);
-$scheduler->run(function () use ($env) {
+$db = new MeekroDB('localhost', $env['DB_USER'], $env['DB_PASSWORD'], $env['DB_NAME']);
+$scheduler->run(function () use ($env, $db) {
     $response = PylesosService::download('https://losangeles.craigslist.org/', $env);
     $doc = new HtmlDocument($response->getResponse());
     foreach ($doc->find('h3.ban') as $level1) {
@@ -19,9 +20,12 @@ $scheduler->run(function () use ($env) {
             'title' => $title,
             'url' => $url
         ]);
-        DB::insert('categories', [
+        $db->insertIgnore('categories', [
             'title' => $title,
-            'url' => $url
+            'donor_url' => $url,
+            'url' => '',
+            'create_time' => (new DateTime())->format('Y-m-d H:i:s')
         ]);
+        $level1Id = $db->insertId();
     }
 });
