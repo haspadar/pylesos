@@ -13,33 +13,33 @@ class Request
 
     public const MOTOR_PUPPETEER = 'puppeteer';
 
-    private const URL = 'url';
+    public const URL = 'url';
 
-    private const PROXY = 'proxy';
+    public const PROXY = 'proxy';
 
-    private const PROXY_AUTH = 'proxy_auth';
+    public const PROXY_AUTH = 'proxy_auth';
 
-    private const MOTOR = 'motor';
+    public const MOTOR = 'motor';
 
-    private const DEBUG = 'debug';
+    public const DEBUG = 'debug';
 
-    private const ROTATOR_URL = 'rotator_url';
+    public const ROTATOR_URL = 'rotator_url';
 
-    private const PROXIES = 'proxies';
+    public const PROXIES = 'proxies';
 
-    private const BAN_WORDS = 'ban_words';
+    public const BAN_WORDS = 'ban_words';
 
-    private const BAN_CODES = 'ban_codes';
+    public const BAN_CODES = 'ban_codes';
 
-    private const MOBILE_USER_AGENT = 'mobile_user_agent';
+    public const MOBILE_USER_AGENT = 'mobile_user_agent';
 
-    private const DESKTOP_USER_AGENT = 'desktop_user_agent';
+    public const DESKTOP_USER_AGENT = 'desktop_user_agent';
 
-    private const WEB_DRIVER_HOST = 'web_driver_host';
+    public const WEB_DRIVER_HOST = 'web_driver_host';
 
-    private const CHROME_DRIVER = 'chrome_driver';
+    public const CHROME_DRIVER = 'chrome_driver';
 
-    private const SQUID = 'squid';
+    public const SQUID = 'squid';
 
     private array $cliParams;
 
