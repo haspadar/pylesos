@@ -20,12 +20,14 @@ class Chrome implements MotorInterface
     public function download(string $url, Rotator $rotator): Response
     {
         $capabilities = [WebDriverCapabilityType::BROWSER_NAME => 'chrome'];
-        $proxy = $rotator->popProxy();
-        $capabilities[WebDriverCapabilityType::PROXY] = [
-            'proxyType' => 'manual',
-            'httpProxy' => $proxy->getAddress(),
-            'sslProxy' => $proxy->getAddress(),
-        ];
+        if ($proxy = $rotator->popProxy()) {
+            $capabilities[WebDriverCapabilityType::PROXY] = [
+                'proxyType' => 'manual',
+                'httpProxy' => $proxy->getAddress(),
+                'sslProxy' => $proxy->getAddress(),
+            ];
+        }
+
         $desiredCapabilities = new DesiredCapabilities($capabilities);
         $options = new ChromeOptions();
 //        $options->setBinary("/usr/bin/google-chrome");

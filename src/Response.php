@@ -154,4 +154,12 @@ class Response
 
         return $count;
     }
+
+    /**
+     * @return Request
+     */
+    public function getRequest(): Request
+    {
+        return $this->request;
+    }
 }
