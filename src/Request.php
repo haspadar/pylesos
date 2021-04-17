@@ -11,35 +11,37 @@ class Request
 
     public const MOTOR_CHROME = 'chrome';
 
+    public const MOTOR_WEB_DRIVER = 'web_driver';
+
     public const MOTOR_PUPPETEER = 'puppeteer';
 
-    public const URL = 'url';
+    public const URL = 'URL';
 
-    public const PROXY = 'proxy';
+    public const PROXY = 'PROXY';
 
-    public const PROXY_AUTH = 'proxy_auth';
+    public const PROXY_AUTH = 'PROXY_AUTH';
 
-    public const MOTOR = 'motor';
+    public const MOTOR = 'MOTOR';
 
-    public const DEBUG = 'debug';
+    public const DEBUG = 'DEBUG';
 
-    public const ROTATOR_URL = 'rotator_url';
+    public const ROTATOR_URL = 'ROTATOR_URL';
 
-    public const PROXIES = 'proxies';
+    public const PROXIES = 'PROXIES';
 
-    public const BAN_WORDS = 'ban_words';
+    public const BAN_WORDS = 'BAN_WORDS';
 
-    public const BAN_CODES = 'ban_codes';
+    public const BAN_CODES = 'BAN_CODES';
 
-    public const MOBILE_USER_AGENT = 'mobile_user_agent';
+    public const MOBILE_USER_AGENT = 'MOBILE_USER_AGENT';
 
-    public const DESKTOP_USER_AGENT = 'desktop_user_agent';
+    public const DESKTOP_USER_AGENT = 'DESKTOP_USER_AGENT';
 
-    public const WEB_DRIVER_HOST = 'web_driver_host';
+    public const WEB_DRIVER_HOST = 'WEB_DRIVER_HOST';
 
-    public const CHROME_DRIVER = 'chrome_driver';
+    public const CHROME_PATH = 'CHROME_PATH';
 
-    public const SQUID = 'squid';
+    public const SQUID = 'SQUID';
 
     private array $cliParams;
 
@@ -61,7 +63,7 @@ class Request
         self::MOBILE_USER_AGENT,
         self::DESKTOP_USER_AGENT,
         self::WEB_DRIVER_HOST,
-        self::CHROME_DRIVER,
+        self::CHROME_PATH,
         self::SQUID,
     ];
 
@@ -157,6 +159,10 @@ class Request
                 return new Chrome($this);
             }
 
+            if ($this->getMotor() == Request::MOTOR_WEB_DRIVER) {
+                return new WebDriver($this);
+            }
+
             if ($this->getMotor() == Request::MOTOR_PUPPETEER) {
                 return new Puppeteer($this);
             }
@@ -220,9 +226,14 @@ class Request
         return $params;
     }
 
+    public function getWebDriverPath(): string
+    {
+        return $this->getParam(self::WEB_DRIVER_PATH);
+    }
+
     public function getChromeDriver(): string
     {
-        return $this->getParam(self::CHROME_DRIVER);
+        return $this->getParam(self::CHROME_PATH);
     }
 
     public function hasSquid(): bool
@@ -243,9 +254,6 @@ class Request
                 $this->error = 'Невалидный URL';
             }
         }
-//        else {
-//            $this->error = 'Укажите URL';
-//        }
 
         return $this->error ? false : true;
     }
@@ -262,9 +270,11 @@ class Request
     private function validateProxies(): bool
     {
         if (isset($this->params[self::PROXIES])) {
-            foreach ($this->params[self::PROXIES] as $proxyAddress) {
-                if ($this->error = $this->validateAddress($proxyAddress)) {
-                    return false;
+            if ($this->params[self::PROXIES]) {
+                foreach ($this->params[self::PROXIES] as $proxyAddress) {
+                    if ($this->error = $this->validateAddress($proxyAddress)) {
+                        return false;
+                    }
                 }
             }
         }
@@ -288,6 +298,7 @@ class Request
     {
         if ($this->params[self::MOTOR] && !in_array($this->params[self::MOTOR], [
             self::MOTOR_CURL,
+            self::MOTOR_WEB_DRIVER,
             self::MOTOR_CHROME,
             self::MOTOR_PUPPETEER
         ])) {
@@ -301,8 +312,8 @@ class Request
     {
         $envParams = [];
         foreach ($env as $name => $value) {
-            $lowerName = strtolower($name);
-            $filteredName = in_array($lowerName, self::CLI_NAMES) ? $lowerName : $name;
+            $upperName = strtoupper($name);
+            $filteredName = in_array($upperName, self::CLI_NAMES) ? $upperName : $name;
             $envParams[$filteredName] = $value;
         }
 
@@ -311,9 +322,14 @@ class Request
 
     private function filterCliParams(): array
     {
-        $cliNames = array_map(fn($name) => $name . ':', self::CLI_NAMES);
+        $cliNames = array_map(fn($name) => strtolower($name) . ':', self::CLI_NAMES);
+        $lowerCaseParams = getopt('', $cliNames);
+        $params = [];
+        foreach ($lowerCaseParams as $name => $value) {
+            $params[strtoupper($name)] = $value;
+        }
 
-        return getopt('', $cliNames);
+        return $params;
     }
 
     private function validateAddress(string $address): string

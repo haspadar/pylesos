@@ -91,7 +91,8 @@ class Response
             'Error: ' . $this->error,
             'Is Ban: ' . intval($this->isBan()),
             'Proxy Address: ' . ($this->proxy ? $this->proxy->getAddress() : ''),
-            'Proxy Auth: ' . ($this->proxy ? $this->proxy->getAuth() : '')
+            'Proxy Auth: ' . ($this->proxy ? $this->proxy->getAuth() : ''),
+            'Motor: ' . $this->getRequest()->getMotor()
         ];
         $climate->cyan()->columns($mainFields, 1);
         $climate->cyan()->out('');

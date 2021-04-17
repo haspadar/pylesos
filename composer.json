@@ -21,7 +21,8 @@
         "php-webdriver/webdriver": "1.8.x-dev",
         "nesk/puphpeteer": "dev-master",
         "simplehtmldom/simplehtmldom": "9999999-dev",
-        "sergeytsalkov/meekrodb": "9999999-dev"
+        "sergeytsalkov/meekrodb": "9999999-dev",
+        "chrome-php/chrome": "9999999-dev"
     },
     "bin": ["bin/pylesos.php"],
     "autoload": {
