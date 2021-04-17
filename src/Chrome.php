@@ -1,6 +1,7 @@
 <?php
 namespace Pylesos;
 
+use HeadlessChromium\Browser\ProcessAwareBrowser;
 use HeadlessChromium\BrowserFactory;
 use League\CLImate\TerminalObject\Basic\Tab;
 
@@ -13,18 +14,18 @@ class Chrome implements MotorInterface
         $this->request = $request;
     }
 
+    public function createBrowser(string $url, ?Proxy $proxy = null): ProcessAwareBrowser
+    {
+        $path = $this->request->getParam(Request::CHROME_PATH);
+        $browserFactory = new BrowserFactory($path);
+
+        return $browserFactory->createBrowser($this->getOptions($url, $proxy));
+    }
+
     public function download(string $url, Rotator $rotator): Response
     {
         $proxy = $rotator->popProxy();
-        $path = $this->request->getParam(Request::CHROME_PATH);
-        $browserFactory = new BrowserFactory($path);
-        $options = array_filter([
-//          'customFlags' => [
-//              '--proxy-server="http://localhost:8080"'
-//          ],
-            'userAgent' => $this->request->getUserAgent($url)
-        ]);
-        $browser = $browserFactory->createBrowser($options);
+        $browser = $this->createBrowser($url, $proxy);
         try {
             $page = $browser->createPage();
             $page->navigate($url)->waitForNavigation();
@@ -41,8 +42,8 @@ class Chrome implements MotorInterface
             if ($this->request->isDebug()) {
                 $response->setDebug([
                     'options' => $this->request->getParams(),
-                    'browser_options' => $options,
-                    'path' => $path,
+                    'browser_options' => $this->getOptions($url, $proxy),
+                    'path' => $this->request->getParam(Request::CHROME_PATH),
                     'chrome_response' => $chromeResponse,
                     'squid_config' => '',
                     'page_title' => $pageTitle,
@@ -55,5 +56,15 @@ class Chrome implements MotorInterface
         } finally {
             $browser->close();
         }
+    }
+
+    private function getOptions(string $url, ?Proxy $proxy = null): array
+    {
+        return array_filter([
+//          'customFlags' => [
+//              '--proxy-server="http://localhost:8080"'
+//          ],
+            'userAgent' => $this->request->getUserAgent($url)
+        ]);
     }
 }
