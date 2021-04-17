@@ -14,18 +14,18 @@ class Chrome implements MotorInterface
         $this->request = $request;
     }
 
-    public function createBrowser(string $url, ?Proxy $proxy = null): ProcessAwareBrowser
+    public function createBrowser(?Proxy $proxy = null): ProcessAwareBrowser
     {
         $path = $this->request->getParam(Request::CHROME_PATH);
         $browserFactory = new BrowserFactory($path);
 
-        return $browserFactory->createBrowser($this->getOptions($url, $proxy));
+        return $browserFactory->createBrowser($this->getOptions($proxy));
     }
 
     public function download(string $url, Rotator $rotator): Response
     {
         $proxy = $rotator->popProxy();
-        $browser = $this->createBrowser($url, $proxy);
+        $browser = $this->createBrowser($proxy);
         try {
             $page = $browser->createPage();
             $page->navigate($url)->waitForNavigation();
@@ -58,13 +58,13 @@ class Chrome implements MotorInterface
         }
     }
 
-    private function getOptions(string $url, ?Proxy $proxy = null): array
+    private function getOptions(?Proxy $proxy = null): array
     {
         return array_filter([
 //          'customFlags' => [
 //              '--proxy-server="http://localhost:8080"'
 //          ],
-            'userAgent' => $this->request->getUserAgent($url)
+            'userAgent' => ''
         ]);
     }
 }
