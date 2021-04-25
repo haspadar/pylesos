@@ -78,7 +78,9 @@ class Response
         if ($isBanCode && $logger) {
             $logger->debug('Is ban code: ' . $this->code);
         } elseif ($banWords && $logger) {
-            $logger->debug('Has ban words: ' . implode(', ', $banWords));
+            $logger->debug(
+                'Has ban words: ' . implode(', ', $banWords) . ' in response: ' . $this->response
+            );
         }
 
         return $isBan;
