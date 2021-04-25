@@ -1,6 +1,8 @@
 <?php
 namespace Pylesos;
 
+use Monolog\Logger;
+
 class Curl implements MotorInterface
 {
     private Request $request;
@@ -10,7 +12,7 @@ class Curl implements MotorInterface
         $this->request = $request;
     }
 
-    public function download(string $url, Rotator $rotator): Response
+    public function download(string $url, Rotator $rotator, Logger $logger): Response
     {
         $ch = curl_init();
         $curlOptions = $this->getCurlOptions($url);
@@ -22,6 +24,7 @@ class Curl implements MotorInterface
             }
         }
 
+        $logger->debug('Using proxy: ' . ($proxy ? $proxy->getAddress() : 'none'));
         foreach ($curlOptions as $optionName => $optionValue) {
             if ($this->request->canConvertToArray($optionValue)) {
                 curl_setopt($ch, constant($optionName), $this->request->parseArrayParam($optionValue));

@@ -6,6 +6,7 @@ use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\WebDriverCapabilityType;
 use Facebook\WebDriver\WebDriverBy;
+use Monolog\Logger;
 
 class WebDriver implements MotorInterface
 {
@@ -35,7 +36,7 @@ class WebDriver implements MotorInterface
         return RemoteWebDriver::create('http://localhost:9515', $desiredCapabilities);
     }
 
-    public function download(string $url, Rotator $rotator): Response
+    public function download(string $url, Rotator $rotator, Logger $logger): Response
     {
         $proxy = $rotator->popProxy();
         $driver = $this->createDriver($proxy);

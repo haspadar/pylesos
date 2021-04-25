@@ -2,6 +2,7 @@
 namespace Pylesos;
 
 use League\CLImate\CLImate;
+use Monolog\Logger;
 
 class Response
 {
@@ -69,10 +70,18 @@ class Response
         ], true);
     }
 
-    public function isBan(): bool
+    public function isBan(?Logger $logger = null): bool
     {
-        return in_array($this->code, $this->request->getBanCodes())
-            || $this->findBanWords($this->request->getBanWords(), $this->response) > 0;
+        $isBanCode = in_array($this->code, $this->request->getBanCodes());
+        $banWords = $this->findBanWords($this->request->getBanWords(), $this->response);
+        $isBan = $isBanCode || $banWords;
+        if ($isBanCode && $logger) {
+            $logger->debug('Is ban code: ' . $this->code);
+        } elseif ($banWords && $logger) {
+            $logger->debug('Has ban words: ' . implode(', ', $banWords));
+        }
+
+        return $isBan;
     }
 
     public function colorize(): void
@@ -146,14 +155,14 @@ class Response
 
     private function findBanWords(array $stopWords, string $response)
     {
-        $count = 0;
+        $words = [];
         foreach ($stopWords as $stopWord) {
             if (mb_strpos($response, $stopWord) !== false) {
-                $count++;
+                $words[] = $stopWord;
             }
         }
 
-        return $count;
+        return $words;
     }
 
     /**

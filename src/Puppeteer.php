@@ -1,6 +1,8 @@
 <?php
 namespace Pylesos;
 
+use Monolog\Logger;
+
 class Puppeteer implements MotorInterface
 {
     private Request $request;
@@ -10,7 +12,7 @@ class Puppeteer implements MotorInterface
         $this->request = $request;
     }
 
-    public function download(string $url, Rotator $rotator): Response
+    public function download(string $url, Rotator $rotator, Logger $logger): Response
     {
         $puppeteer = new \Nesk\Puphpeteer\Puppeteer();
         $proxy = $rotator->popProxy();

@@ -4,6 +4,7 @@ namespace Pylesos;
 use HeadlessChromium\Browser\ProcessAwareBrowser;
 use HeadlessChromium\BrowserFactory;
 use League\CLImate\TerminalObject\Basic\Tab;
+use Monolog\Logger;
 
 class Chrome implements MotorInterface
 {
@@ -22,7 +23,7 @@ class Chrome implements MotorInterface
         return $browserFactory->createBrowser($this->getOptions($proxy));
     }
 
-    public function download(string $url, Rotator $rotator): Response
+    public function download(string $url, Rotator $rotator, Logger $logger): Response
     {
         $proxy = $rotator->popProxy();
         $browser = $this->createBrowser($proxy);

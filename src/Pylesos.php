@@ -1,6 +1,8 @@
 <?php
 namespace Pylesos;
 
+use Monolog\Logger;
+
 class Pylesos
 {
     private MotorInterface $motor;
@@ -9,14 +11,17 @@ class Pylesos
      */
     private Rotator $rotator;
 
-    public function __construct(MotorInterface $motor, Rotator $rotator)
+    private ?Logger $logger;
+
+    public function __construct(MotorInterface $motor, Rotator $rotator, ?Logger $logger = null)
     {
         $this->motor = $motor;
         $this->rotator = $rotator;
+        $this->logger = $logger;
     }
 
     public function download(string $url): Response
     {
-        return $this->motor->download($url, $this->rotator);
+        return $this->motor->download($url, $this->rotator, $this->logger);
     }
 }
