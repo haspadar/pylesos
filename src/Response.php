@@ -73,13 +73,15 @@ class Response
     public function isBan(?Logger $logger = null): bool
     {
         $isBanCode = in_array($this->code, $this->request->getBanCodes());
-        $banWords = $this->findBanWords($this->request->getBanWords(), $this->response);
+        $banWords = $this->findBanWords($this->request->getBanWords(), strip_tags($this->response));
         $isBan = $isBanCode || $banWords;
         if ($isBanCode && $logger) {
             $logger->debug('Is ban code: ' . $this->code);
         } elseif ($banWords && $logger) {
-            $logger->debug(
-                'Has ban words: ' . implode(', ', $banWords) . ' in response: ' . $this->response
+            $logger->debug('Has ban words: '
+                           . implode(', ', $banWords)
+                           . ' in response: '
+                           . strip_tags($this->response)
             );
         }
 
