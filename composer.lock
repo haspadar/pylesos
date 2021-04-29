@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "936cdd52b3b208ec1cac3523ea38e747",
+    "content-hash": "53474d86dec68b367e5e417088873e8d",
     "packages": [
         {
             "name": "apix/log",
@@ -68,12 +68,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/chrome-php/headless-chromium-php.git",
-                "reference": "423d8e60bd1c2612ddc72502891f26f600bca707"
+                "reference": "220895b5ee2203d641371b947e2be816ee5a8708"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/chrome-php/headless-chromium-php/zipball/423d8e60bd1c2612ddc72502891f26f600bca707",
-                "reference": "423d8e60bd1c2612ddc72502891f26f600bca707",
+                "url": "https://api.github.com/repos/chrome-php/headless-chromium-php/zipball/220895b5ee2203d641371b947e2be816ee5a8708",
+                "reference": "220895b5ee2203d641371b947e2be816ee5a8708",
                 "shasum": ""
             },
             "require": {
@@ -126,7 +126,7 @@
                 "issues": "https://github.com/chrome-php/headless-chromium-php/issues",
                 "source": "https://github.com/chrome-php/headless-chromium-php/tree/0.10"
             },
-            "time": "2021-01-31T20:12:13+00:00"
+            "time": "2021-04-28T16:02:01+00:00"
         },
         {
             "name": "clue/socket-raw",
@@ -604,12 +604,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-webdriver/php-webdriver.git",
-                "reference": "a4ce082dfa86627fb46eb20f6f01491e561d4eb5"
+                "reference": "356dd1d5fda67f25d0491f411905452f5ee99256"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-webdriver/php-webdriver/zipball/a4ce082dfa86627fb46eb20f6f01491e561d4eb5",
-                "reference": "a4ce082dfa86627fb46eb20f6f01491e561d4eb5",
+                "url": "https://api.github.com/repos/php-webdriver/php-webdriver/zipball/356dd1d5fda67f25d0491f411905452f5ee99256",
+                "reference": "356dd1d5fda67f25d0491f411905452f5ee99256",
                 "shasum": ""
             },
             "require": {
@@ -668,7 +668,7 @@
                 "issues": "https://github.com/php-webdriver/php-webdriver/issues",
                 "source": "https://github.com/php-webdriver/php-webdriver/tree/main"
             },
-            "time": "2021-04-24T20:32:01+00:00"
+            "time": "2021-04-27T21:33:17+00:00"
         },
         {
             "name": "phpoption/phpoption",

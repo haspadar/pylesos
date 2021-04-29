@@ -20,8 +20,8 @@
         "league/climate": "^3.5",
         "php-webdriver/webdriver": "1.8.x-dev",
         "nesk/puphpeteer": "dev-master",
-        "simplehtmldom/simplehtmldom": "9999999-dev",
-        "chrome-php/chrome": "9999999-dev",
+        "simplehtmldom/simplehtmldom": "dev-master",
+        "chrome-php/chrome": "0.10.x-dev",
         "monolog/monolog": "2.x-dev"
     },
     "bin": ["bin/pylesos.php"],
