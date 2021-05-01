@@ -76,9 +76,9 @@ class Response
         $banWords = $this->findBanWords($this->request->getBanWords(), strip_tags($this->response));
         $isBan = $isBanCode || $banWords;
         if ($isBanCode && $logger) {
-            $logger->debug('Is ban code: ' . $this->code);
+            $logger->warning('Is ban code: ' . $this->code);
         } elseif ($banWords && $logger) {
-            $logger->debug('Has ban words: '
+            $logger->warning('Has ban words: '
                            . implode(', ', $banWords)
                            . ' in response: '
                            . strip_tags($this->response)
