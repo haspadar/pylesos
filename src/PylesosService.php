@@ -21,7 +21,7 @@ class PylesosService
                 $pylesos = new Pylesos($motor, $rotator, $logger);
                 $attemptNumber = 1;
                 do {
-                    $logger->warning('Download ' . $request->getUrl() . ', attempt #' . $attemptNumber++);
+                    $logger->info('Download ' . $request->getUrl() . ', attempt #' . $attemptNumber++);
                     $response = $pylesos->download($request->getUrl());
                 } while ($response->isBan($logger) && --$count > 0);
 
