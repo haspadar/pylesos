@@ -82,12 +82,12 @@ class Request
     public function validate(): string
     {
         $this->validateUrl()
-            && $this->validateProxy()
-            && $this->validateProxies()
-            && $this->validateRotatorUrl()
-            && $this->validateMotor()
-            && $this->validateSquidPermissions()
-            && $this->validatePuppeteerInstalled();
+        && $this->validateProxy()
+        && $this->validateProxies()
+        && $this->validateRotatorUrl()
+        && $this->validateMotor()
+        && $this->validateSquidPermissions()
+        && $this->validatePuppeteerInstalled();
 
         return $this->error;
     }
@@ -270,11 +270,9 @@ class Request
     private function validateProxies(): bool
     {
         if (isset($this->params[self::PROXIES])) {
-            if ($this->params[self::PROXIES]) {
-                foreach ($this->params[self::PROXIES] as $proxyAddress) {
-                    if ($this->error = $this->validateAddress($proxyAddress)) {
-                        return false;
-                    }
+            foreach ($this->getArrayParam(self::PROXIES) as $proxyAddress) {
+                if ($this->error = $this->validateAddress($proxyAddress)) {
+                    return false;
                 }
             }
         }
@@ -297,11 +295,11 @@ class Request
     private function validateMotor(): bool
     {
         if ($this->params[self::MOTOR] && !in_array($this->params[self::MOTOR], [
-            self::MOTOR_CURL,
-            self::MOTOR_WEB_DRIVER,
-            self::MOTOR_CHROME,
-            self::MOTOR_PUPPETEER
-        ])) {
+                self::MOTOR_CURL,
+                self::MOTOR_WEB_DRIVER,
+                self::MOTOR_CHROME,
+                self::MOTOR_PUPPETEER
+            ])) {
             $this->error = 'Не найден мотор: допускаются curl, chrome, puppeteer';
         }
 
@@ -320,13 +318,20 @@ class Request
         return $envParams;
     }
 
+    private function isCli(): bool
+    {
+        return php_sapi_name() === 'cli';
+    }
+
     private function filterCliParams(): array
     {
-        $cliNames = array_map(fn($name) => strtolower($name) . ':', self::CLI_NAMES);
-        $lowerCaseParams = getopt('', $cliNames);
         $params = [];
-        foreach ($lowerCaseParams as $name => $value) {
-            $params[strtoupper($name)] = $value;
+        if ($this->isCli()) {
+            $cliNames = array_map(fn($name) => strtolower($name) . ':', self::CLI_NAMES);
+            $lowerCaseParams = getopt('', $cliNames);
+            foreach ($lowerCaseParams as $name => $value) {
+                $params[strtoupper($name)] = $value;
+            }
         }
 
         return $params;

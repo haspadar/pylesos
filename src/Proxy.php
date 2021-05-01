@@ -23,22 +23,24 @@ class Proxy
         }
 
         $parsed = parse_url($addressWithAuth);
-        $this->ip = $parsed['host'] ?? '';
-        $this->port = $parsed['port'] ?? '';
-        $this->login = $parsed['user'] ?? '';
-        $this->password = $parsed['pass'] ?? '';
-        $scheme = $parsed['scheme'];
-        $this->address = $scheme
-            . '://'
-            . $this->ip
-            . ':'
-            . $this->port;
-        $this->auth = $this->login ? $this->login . ':' . $this->password : '';
+        if ($parsed) {
+            $this->ip = $parsed['host'] ?? '';
+            $this->port = $parsed['port'] ?? '';
+            $this->login = $parsed['user'] ?? '';
+            $this->password = $parsed['pass'] ?? '';
+            $scheme = $parsed['scheme'];
+            $this->address = $scheme
+                . '://'
+                . $this->ip
+                . ':'
+                . $this->port;
+            $this->auth = $this->login ? $this->login . ':' . $this->password : '';
+        }
     }
 
     public function getAddress(): string
     {
-        return $this->address;
+        return $this->address ?? '';
     }
 
     public function getLogin(): string
@@ -58,7 +60,7 @@ class Proxy
 
     public function getAuth(): string
     {
-        return $this->auth;
+        return $this->auth ?? '';
     }
 
     public function getPassword(): string
