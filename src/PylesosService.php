@@ -1,6 +1,7 @@
 <?php
 namespace Pylesos;
 
+use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
@@ -11,7 +12,7 @@ class PylesosService
         $env['URL'] = $url;
         $request = new Request($env);
         $logger = new Logger('pylesos');
-        $logger->pushHandler(new StreamHandler($env['PYLESOS_LOG_PATH']));
+        $logger->pushHandler(new StreamHandler('php://stdout'));
         $error = $request->validate();
         if (!$error) {
             $motor = $request->generateMotor();

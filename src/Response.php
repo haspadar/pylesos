@@ -78,10 +78,9 @@ class Response
         if ($isBanCode && $logger) {
             $logger->warning('Is ban code: ' . $this->code);
         } elseif ($banWords && $logger) {
-            $logger->warning('Has ban words: '
-                           . implode(', ', $banWords)
-                           . ' in response: '
-                           . strip_tags($this->response)
+            $logger->warning(
+                'Has ban words: ' . implode(', ', $banWords),
+                ['strip_tags_response' => strip_tags($this->response)]
             );
         }
 
