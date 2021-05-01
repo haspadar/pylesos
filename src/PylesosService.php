@@ -11,7 +11,7 @@ class PylesosService
         $env['URL'] = $url;
         $request = new Request($env);
         $logger = new Logger('pylesos');
-        $logger->pushHandler(new StreamHandler($env['LOG_PATH']));
+        $logger->pushHandler(new StreamHandler($env['PYLESOS_LOG_PATH']));
         $error = $request->validate();
         if (!$error) {
             $motor = $request->generateMotor();
