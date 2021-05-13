@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "53474d86dec68b367e5e417088873e8d",
+    "content-hash": "8d54746db4c2c74cb0cd1e630a927fff",
     "packages": [
         {
             "name": "apix/log",
@@ -604,12 +604,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-webdriver/php-webdriver.git",
-                "reference": "356dd1d5fda67f25d0491f411905452f5ee99256"
+                "reference": "744004ed0cdb0c2b5ed2bd1a59ea012607775b59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-webdriver/php-webdriver/zipball/356dd1d5fda67f25d0491f411905452f5ee99256",
-                "reference": "356dd1d5fda67f25d0491f411905452f5ee99256",
+                "url": "https://api.github.com/repos/php-webdriver/php-webdriver/zipball/744004ed0cdb0c2b5ed2bd1a59ea012607775b59",
+                "reference": "744004ed0cdb0c2b5ed2bd1a59ea012607775b59",
                 "shasum": ""
             },
             "require": {
@@ -638,11 +638,6 @@
             },
             "default-branch": true,
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "1.8.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "Facebook\\WebDriver\\": "lib/"
@@ -668,7 +663,7 @@
                 "issues": "https://github.com/php-webdriver/php-webdriver/issues",
                 "source": "https://github.com/php-webdriver/php-webdriver/tree/main"
             },
-            "time": "2021-04-27T21:33:17+00:00"
+            "time": "2021-05-12T20:58:29+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -1502,11 +1497,11 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "php-webdriver/webdriver": 20,
         "nesk/puphpeteer": 20,
         "simplehtmldom/simplehtmldom": 20,
         "chrome-php/chrome": 20,
-        "monolog/monolog": 20
+        "monolog/monolog": 20,
+        "php-webdriver/webdriver": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

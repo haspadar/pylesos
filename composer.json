@@ -18,11 +18,11 @@
         "vlucas/phpdotenv": "^5.1",
         "ext-json": "*",
         "league/climate": "^3.5",
-        "php-webdriver/webdriver": "1.8.x-dev",
         "nesk/puphpeteer": "dev-master",
         "simplehtmldom/simplehtmldom": "dev-master",
         "chrome-php/chrome": "0.10.x-dev",
-        "monolog/monolog": "2.x-dev"
+        "monolog/monolog": "2.x-dev",
+        "php-webdriver/webdriver": "9999999-dev"
     },
     "bin": ["bin/pylesos.php"],
     "autoload": {
