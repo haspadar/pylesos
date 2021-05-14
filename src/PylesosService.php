@@ -34,7 +34,7 @@ class PylesosService
         return self::download($url, [], $headers, $env, $count);
     }
 
-    private static function download(string $url, array $postParams, array $headers, array $env, int $count): Response
+    public static function download(string $url, array $postParams, array $headers, array $env, int $count): Response
     {
         $env['URL'] = $url;
         $request = new Request($env);
