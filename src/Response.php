@@ -10,6 +10,8 @@ class Response
 
     private int $code;
 
+    private string $lastUrl;
+
     private string $error;
 
     private array $debug = [];
@@ -18,10 +20,17 @@ class Response
 
     private Request $request;
 
-    public function __construct(string $response, int $code, string $error, ?Proxy $proxy, Request $request)
-    {
+    public function __construct(
+        string $response,
+        int $code,
+        string $lastUrl,
+        string $error,
+        ?Proxy $proxy,
+        Request $request
+    ) {
         $this->response = $response;
         $this->code = $code;
+        $this->lastUrl = $lastUrl;
         $this->error = $error;
         $this->proxy = $proxy;
         $this->request = $request;
@@ -32,7 +41,12 @@ class Response
         $this->debug = $debug;
     }
     
-    public function getCode(): int 
+    public function getLastUrl(): string
+    {
+        return $this->lastUrl;
+    }
+
+    public function getCode(): int
     {
         return $this->code;
     }

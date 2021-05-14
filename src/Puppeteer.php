@@ -32,6 +32,7 @@ class Puppeteer implements MotorInterface
             $content,
             0,
             '',
+            '',
             $proxy,
             $this->request
         );

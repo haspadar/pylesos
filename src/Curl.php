@@ -48,10 +48,12 @@ class Curl implements MotorInterface
         }
 
         $info = curl_getinfo($ch);
+        $lastUrl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
         curl_close($ch);
         $response = new Response(
             $curlResponse,
             $info['http_code'],
+            $lastUrl,
             $error ?? '',
             $proxy,
             $this->request

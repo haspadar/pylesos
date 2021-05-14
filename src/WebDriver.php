@@ -47,6 +47,7 @@ class WebDriver implements MotorInterface
             $chromeResponse,
             0,
             '',
+            '',
             $proxy,
             $this->request
         );
