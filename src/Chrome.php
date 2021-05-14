@@ -23,7 +23,7 @@ class Chrome implements MotorInterface
         return $browserFactory->createBrowser($this->getOptions($proxy));
     }
 
-    public function download(string $url, Rotator $rotator, array $postParams, Logger $logger): Response
+    public function download(string $url, Rotator $rotator, array $postParams, array $headers, Logger $logger): Response
     {
         $proxy = $rotator->popProxy();
         $browser = $this->createBrowser($proxy);

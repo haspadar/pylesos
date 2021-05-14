@@ -36,7 +36,7 @@ class WebDriver implements MotorInterface
         return RemoteWebDriver::create('http://localhost:9515', $desiredCapabilities);
     }
 
-    public function download(string $url, Rotator $rotator, array $postParams, Logger $logger): Response
+    public function download(string $url, Rotator $rotator, array $postParams, array $headers, Logger $logger): Response
     {
         $proxy = $rotator->popProxy();
         $driver = $this->createDriver($proxy);

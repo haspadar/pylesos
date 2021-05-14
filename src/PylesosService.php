@@ -6,35 +6,35 @@ use Monolog\Logger;
 
 class PylesosService
 {
-    public static function getWithoutProxy(string $url, array $env): Response
+    public static function getWithoutProxy(string $url, array $headers, array $env): Response
     {
         $env['ROTATOR_URL'] = '';
         $env['PROXY'] = '';
         $env['PROXIES'] = '';
 
-        return self::get($url, $env, 1);
+        return self::get($url, $headers, $env, 1);
     }
 
-    public static function postWithoutProxy(string $url, array $postParams, array $env): Response
+    public static function postWithoutProxy(string $url, array $postParams, array $headers, array $env): Response
     {
         $env['ROTATOR_URL'] = '';
         $env['PROXY'] = '';
         $env['PROXIES'] = '';
 
-        return self::post($url, $postParams, $env, 1);
+        return self::post($url, $postParams, $headers, $env, 1);
     }
 
-    public static function post(string $url, array $postParams, array $env, int $count = 20): Response
+    public static function post(string $url, array $postParams, array $headers, array $env, int $count = 20): Response
     {
-        return self::download($url, $postParams, $env, $count);
+        return self::download($url, $postParams, $headers, $env, $count);
     }
 
-    public static function get(string $url, array $env, int $count = 20): Response
+    public static function get(string $url, array $headers, array $env, int $count = 20): Response
     {
-        return self::download($url, [], $env, $count);
+        return self::download($url, [], $headers, $env, $count);
     }
 
-    private static function download(string $url, array $postParams, array $env, int $count): Response
+    private static function download(string $url, array $postParams, array $headers, array $env, int $count): Response
     {
         $env['URL'] = $url;
         $request = new Request($env);
@@ -49,7 +49,7 @@ class PylesosService
                 $attemptNumber = 1;
                 do {
                     $logger->info('Download ' . $request->getUrl() . ', attempt #' . $attemptNumber++);
-                    $response = $pylesos->download($request->getUrl(), $postParams);
+                    $response = $pylesos->download($request->getUrl(), $postParams, $headers);
                 } while ($response->isBan($logger) && --$count > 0);
 
                 return $response;

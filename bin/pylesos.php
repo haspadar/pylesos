@@ -21,7 +21,7 @@ if (!$error = $request->validate()) {
     if ($motor) {
         $rotator = new Rotator($request);
         $pylesos = new Pylesos($motor, $rotator, $logger);
-        $response = $pylesos->download($request->getUrl());
+        $response = $pylesos->download($request->getUrl(), [], []);
         $response->colorize();
     } else {
         $logger->error('Motor not found');
