@@ -12,7 +12,7 @@ class Curl implements MotorInterface
         $this->request = $request;
     }
 
-    public function download(string $url, Rotator $rotator, Logger $logger): Response
+    public function download(string $url, Rotator $rotator, array $postParams, Logger $logger): Response
     {
         $ch = curl_init();
         $curlOptions = $this->getCurlOptions($url);
@@ -31,6 +31,11 @@ class Curl implements MotorInterface
             } else {
                 curl_setopt($ch, constant($optionName), $optionValue);
             }
+        }
+
+        if ($postParams) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postParams));
+            curl_setopt($ch, CURLOPT_POST, 1);
         }
 
         $curlResponse = curl_exec($ch);

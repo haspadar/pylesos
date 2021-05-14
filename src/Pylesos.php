@@ -20,8 +20,8 @@ class Pylesos
         $this->logger = $logger;
     }
 
-    public function download(string $url): Response
+    public function download(string $url, array $postParams = []): Response
     {
-        return $this->motor->download($url, $this->rotator, $this->logger);
+        return $this->motor->download($url, $this->rotator, $postParams, $this->logger);
     }
 }

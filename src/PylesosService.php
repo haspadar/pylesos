@@ -1,13 +1,40 @@
 <?php
 namespace Pylesos;
 
-use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
 class PylesosService
 {
-    public static function download(string $url, array $env, int $count = 20): Response
+    public static function getWithoutProxy(string $url, array $env): Response
+    {
+        $env['ROTATOR_URL'] = '';
+        $env['PROXY'] = '';
+        $env['PROXIES'] = '';
+
+        return self::get($url, $env, 1);
+    }
+
+    public static function postWithoutProxy(string $url, array $postParams, array $env): Response
+    {
+        $env['ROTATOR_URL'] = '';
+        $env['PROXY'] = '';
+        $env['PROXIES'] = '';
+
+        return self::post($url, $postParams, $env, 1);
+    }
+
+    public static function post(string $url, array $postParams, array $env, int $count = 20): Response
+    {
+        return self::download($url, $postParams, $env, $count);
+    }
+
+    public static function get(string $url, array $env, int $count = 20): Response
+    {
+        return self::download($url, [], $env, $count);
+    }
+
+    private static function download(string $url, array $postParams, array $env, int $count): Response
     {
         $env['URL'] = $url;
         $request = new Request($env);
@@ -22,7 +49,7 @@ class PylesosService
                 $attemptNumber = 1;
                 do {
                     $logger->info('Download ' . $request->getUrl() . ', attempt #' . $attemptNumber++);
-                    $response = $pylesos->download($request->getUrl());
+                    $response = $pylesos->download($request->getUrl(), $postParams);
                 } while ($response->isBan($logger) && --$count > 0);
 
                 return $response;
