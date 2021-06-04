@@ -39,6 +39,10 @@ class Proxies
     {
         $list = [];
         $response = json_decode(file_get_contents($apiUrl));
+        if (!isset($response->list)) {
+            throw new Exception('No proxy list in rotator: ', var_export($response, true));
+        }
+
         foreach ($response->list as $rotatorProxy) {
             $list[] = $rotatorProxy->auth . '@' . $rotatorProxy->address;
         }
