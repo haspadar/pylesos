@@ -14,7 +14,7 @@ class Scheduler
         $this->options = $options;
     }
 
-    public function run($callback)
+    public function run(Callable $callback, ?Callable $exceptionCallback)
     {
         date_default_timezone_set('Europe/Minsk');
         $optionsHours = $this->getFilteredHours($this->options[self::SCHEDULER_TIMES] ?? '');
@@ -22,7 +22,15 @@ class Scheduler
             exit('No time to run, wait for ' . $this->getNextHour($optionsHours) . ':00' . PHP_EOL);
         }
 
-        $this->checkForSingleInstance($callback, self::LOCK_FILE);
+        try {
+            $this->checkForSingleInstance($callback, self::LOCK_FILE);
+        } catch (Exception $e) {
+            if ($exceptionCallback) {
+                $exceptionCallback($e);
+            } else {
+                throw $e;
+            }
+        }
     }
 
     private function getNextHour(array $optionsHours): ?string
