@@ -7,7 +7,7 @@ class Scheduler
 
     const SCHEDULER_TIMES = 'SCHEDULER_TIMES';
 
-    const LOCK_FILE = '../parser.lock';
+    const LOCK_FILE = 'parser.lock';
 
     public function __construct(array $options)
     {
@@ -23,7 +23,7 @@ class Scheduler
         }
 
         try {
-            $this->checkForSingleInstance($callback, self::LOCK_FILE);
+            $this->checkForSingleInstance($callback, $this->options['LOCK_FILE'] ?? self::LOCK_FILE);
         } catch (Exception $e) {
             if ($exceptionCallback) {
                 $exceptionCallback($e);
