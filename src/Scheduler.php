@@ -7,8 +7,6 @@ class Scheduler
 
     const SCHEDULER_TIMES = 'SCHEDULER_TIMES';
 
-    const LOCK_FILE = 'parser.lock';
-
     public function __construct(array $options)
     {
         $this->options = $options;
@@ -23,7 +21,7 @@ class Scheduler
         }
 
         try {
-            $this->checkForSingleInstance($callback, $this->options['LOCK_FILE'] ?? self::LOCK_FILE);
+            $this->checkForSingleInstance($callback, $this->getRunScriptDirectoryName());
         } catch (Exception $e) {
             if ($exceptionCallback) {
                 $exceptionCallback($e);
@@ -107,5 +105,15 @@ class Scheduler
         }
 
         return $hour;
+    }
+
+    private function getRunScriptDirectoryName(): string
+    {
+        $stack = debug_backtrace();
+        $firstFrame = $stack[count($stack) - 1];
+        $initialFile = $firstFrame['file'];
+        $initialFileParts = explode('/', $initialFile);
+
+        return $initialFileParts[count($initialFileParts) - 2];
     }
 }
