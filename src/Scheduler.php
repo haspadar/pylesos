@@ -21,7 +21,7 @@ class Scheduler
         }
 
         try {
-            $this->checkForSingleInstance($callback, $this->getRunScriptDirectoryName());
+            $this->checkForSingleInstance($callback, $this->getRunScriptDirectoryName() . '.lock');
         } catch (Exception $e) {
             if ($exceptionCallback) {
                 $exceptionCallback($e);
