@@ -17,7 +17,7 @@ class Scheduler
         date_default_timezone_set('Europe/Minsk');
         $optionsHours = $this->getFilteredHours($this->options[self::SCHEDULER_TIMES] ?? '');
         if (!$this->isTimeToRun($optionsHours)) {
-            exit('No time to run, wait for ' . $this->getNextHour($optionsHours) . ':00' . PHP_EOL);
+            throw new Exception('No time to run, wait for ' . $this->getNextHour($optionsHours) . ':00');
         }
 
         try {
@@ -61,7 +61,7 @@ class Scheduler
                 "containing directory?"
             );
         } elseif (!$gotLock && $wouldBlock) {
-            exit("Another instance is already running; terminating." . PHP_EOL);
+            throw new Exception("Another instance is already running; terminating.");
         }
 
         // Lock acquired; let's write our PID to the lock file for the convenience
