@@ -22,7 +22,7 @@
         "simplehtmldom/simplehtmldom": "dev-master",
         "chrome-php/chrome": "1.0.x-dev",
         "monolog/monolog": "2.x-dev",
-        "php-webdriver/webdriver": "dev-master"
+        "php-webdriver/webdriver": "dev-main"
     },
     "bin": ["bin/pylesos.php"],
     "autoload": {
