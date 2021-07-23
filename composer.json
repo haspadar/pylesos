@@ -20,7 +20,7 @@
         "league/climate": "^3.5",
         "nesk/puphpeteer": "dev-master",
         "simplehtmldom/simplehtmldom": "dev-master",
-        "chrome-php/chrome": "0.10.x-dev",
+        "chrome-php/chrome": "9999999-dev",
         "monolog/monolog": "2.x-dev",
         "php-webdriver/webdriver": "9999999-dev"
     },
