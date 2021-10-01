@@ -11,4 +11,4 @@ $scheduler = new Scheduler($env);
 $scheduler->run(function () use ($env) {
     $response = PylesosService::get('http://api.ipify.org/', [], $env);
     echo $response->getResponse() . PHP_EOL;
-});
+}, null);

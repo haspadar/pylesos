@@ -24,17 +24,28 @@ class PylesosService
         return self::post($url, $postParams, $headers, $env, 1);
     }
 
-    public static function post(string $url, array $postParams, array $headers, array $env, int $count = 20): Response
+    public static function post(string $url, array $postParams, array $headers, array $env, int $count = 20, ?Rotator $rotator = null): Response
     {
-        return self::download($url, $postParams, $headers, $env, $count);
+        return self::download($url, $postParams, $headers, $env, $count, $rotator);
     }
 
-    public static function get(string $url, array $headers, array $env, int $count = 20): Response
+    public static function get(string $url, array $headers, array $env, int $count = 20, ?Rotator $rotator = null): Response
     {
-        return self::download($url, [], $headers, $env, $count);
+        return self::download($url, [], $headers, $env, $count, $rotator);
     }
 
-    public static function download(string $url, array $postParams, array $headers, array $env, int $count): Response
+    public static function createRotator(array $env): Rotator
+    {
+        $request = new Request($env);
+        $error = $request->validate();
+        if (!$error) {
+            return new Rotator($request);
+        } else {
+            throw new Exception($error);
+        }
+    }
+
+    public static function download(string $url, array $postParams, array $headers, array $env, int $count, ?Rotator $rotator = null): Response
     {
         $env['URL'] = $url;
         $request = new Request($env);
@@ -44,7 +55,10 @@ class PylesosService
         if (!$error) {
             $motor = $request->generateMotor();
             if ($motor) {
-                $rotator = new Rotator($request);
+                if (!$rotator) {
+                    $rotator = new Rotator($request);
+                }
+
                 $pylesos = new Pylesos($motor, $rotator, $logger);
                 $attemptNumber = 1;
                 do {
