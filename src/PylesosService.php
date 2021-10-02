@@ -46,7 +46,7 @@ class PylesosService
         if (!$error) {
             $motor = $request->generateMotor();
             if ($motor) {
-                $rotator = self::getRotator($request);
+                $rotator = self::getRotator($request, $logger);
                 $pylesos = new Pylesos($motor, $rotator, $logger);
                 $attemptNumber = 1;
                 do {
@@ -68,10 +68,10 @@ class PylesosService
         }
     }
 
-    private static function getRotator(Request $request): Rotator
+    private static function getRotator(Request $request, Logger $logger): Rotator
     {
         if (!self::$rotator || !self::$rotator->getProxies()) {
-            self::$rotator = new Rotator($request);
+            self::$rotator = new Rotator($request, $logger);
         }
 
         return self::$rotator;
