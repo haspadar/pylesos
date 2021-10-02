@@ -6,7 +6,7 @@ use Monolog\Logger;
 
 class PylesosService
 {
-    private static Rotator $rotator;
+    private static ?Rotator $rotator = null;
 
     public static function getWithoutProxy(string $url, array $headers, array $env): Response
     {
