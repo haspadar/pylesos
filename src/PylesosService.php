@@ -6,6 +6,8 @@ use Monolog\Logger;
 
 class PylesosService
 {
+    private static Rotator $rotator;
+
     public static function getWithoutProxy(string $url, array $headers, array $env): Response
     {
         $env['ROTATOR_URL'] = '';
@@ -24,28 +26,17 @@ class PylesosService
         return self::post($url, $postParams, $headers, $env, 1);
     }
 
-    public static function post(string $url, array $postParams, array $headers, array $env, int $count = 20, ?Rotator $rotator = null): Response
+    public static function post(string $url, array $postParams, array $headers, array $env, int $count = 20): Response
     {
-        return self::download($url, $postParams, $headers, $env, $count, $rotator);
+        return self::download($url, $postParams, $headers, $env, $count);
     }
 
-    public static function get(string $url, array $headers, array $env, int $count = 20, ?Rotator $rotator = null): Response
+    public static function get(string $url, array $headers, array $env, int $count = 20): Response
     {
-        return self::download($url, [], $headers, $env, $count, $rotator);
+        return self::download($url, [], $headers, $env, $count);
     }
 
-    public static function createRotator(array $env): Rotator
-    {
-        $request = new Request($env);
-        $error = $request->validate();
-        if (!$error) {
-            return new Rotator($request);
-        } else {
-            throw new Exception($error);
-        }
-    }
-
-    public static function download(string $url, array $postParams, array $headers, array $env, int $count, ?Rotator $rotator = null): Response
+    public static function download(string $url, array $postParams, array $headers, array $env, int $count): Response
     {
         $env['URL'] = $url;
         $request = new Request($env);
@@ -55,10 +46,7 @@ class PylesosService
         if (!$error) {
             $motor = $request->generateMotor();
             if ($motor) {
-                if (!$rotator) {
-                    $rotator = new Rotator($request);
-                }
-
+                $rotator = self::getRotator($request);
                 $pylesos = new Pylesos($motor, $rotator, $logger);
                 $attemptNumber = 1;
                 do {
@@ -78,5 +66,14 @@ class PylesosService
 
             throw new Exception($error);
         }
+    }
+
+    private static function getRotator(Request $request): Rotator
+    {
+        if (!self::$rotator || !self::$rotator->getProxies()) {
+            self::$rotator = new Rotator($request);
+        }
+
+        return self::$rotator;
     }
 }
