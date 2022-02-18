@@ -19,7 +19,6 @@
         "ext-json": "*",
         "league/climate": "^3.5",
         "nesk/puphpeteer": "2.0.0",
-        "simplehtmldom/simplehtmldom": "2.*",
         "chrome-php/chrome": "1.0.x",
         "monolog/monolog": "2.x",
         "php-webdriver/webdriver": "1.x"
