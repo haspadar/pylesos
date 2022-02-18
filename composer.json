@@ -9,7 +9,7 @@
             "email": "haspadar@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
         "php": ">=7.4",
         "ext-posix": "*",
@@ -18,11 +18,11 @@
         "vlucas/phpdotenv": "^5.1",
         "ext-json": "*",
         "league/climate": "^3.5",
-        "nesk/puphpeteer": "dev-master",
-        "simplehtmldom/simplehtmldom": "dev-master",
-        "chrome-php/chrome": "1.0.x-dev",
-        "monolog/monolog": "2.x-dev",
-        "php-webdriver/webdriver": "dev-main"
+        "nesk/puphpeteer": "2.0.0",
+        "simplehtmldom/simplehtmldom": "2.0-RC2",
+        "chrome-php/chrome": "1.0.x",
+        "monolog/monolog": "2.x",
+        "php-webdriver/webdriver": "1.x"
     },
     "bin": ["bin/pylesos.php"],
     "autoload": {
