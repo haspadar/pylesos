@@ -33,6 +33,8 @@ class Request
 
     public const BAN_CODES = 'BAN_CODES';
 
+    public const CURLOPT_HTTPHEADER = 'CURLOPT_HTTPHEADER';
+
     public const MOBILE_USER_AGENT = 'MOBILE_USER_AGENT';
 
     public const DESKTOP_USER_AGENT = 'DESKTOP_USER_AGENT';
