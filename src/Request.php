@@ -253,7 +253,7 @@ class Request
             $query = $parsed['query'] ?? '';
             $fullUrl = $scheme . '://' . $host . $path . ($query ? '?' . $query : '');
             if (!filter_var($fullUrl, FILTER_VALIDATE_URL)) {
-                $this->error = 'Невалидный URL';
+                $this->error = 'Невалидный URL: "' . $fullUrl . '"';
             }
         }
 
