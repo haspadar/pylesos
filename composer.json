@@ -18,7 +18,7 @@
         "vlucas/phpdotenv": "^5.1",
         "ext-json": "*",
         "league/climate": "^3.5",
-        "monolog/monolog": "2.x"
+        "monolog/monolog": "^3.2"
     },
     "bin": ["bin/pylesos.php"],
     "autoload": {
