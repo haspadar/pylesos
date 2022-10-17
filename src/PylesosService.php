@@ -41,7 +41,10 @@ class PylesosService
         $env['URL'] = $url;
         $request = new Request($env);
         $logger = new Logger('pylesos');
-        $logger->pushHandler(new StreamHandler('php://stdout'));
+        if (php_sapi_name() === 'cli') {
+            $logger->pushHandler(new StreamHandler('php://stdout'));
+        }
+
         $error = $request->validate();
         if (!$error) {
             $motor = $request->generateMotor();
