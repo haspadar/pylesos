@@ -7,5 +7,5 @@ interface MotorInterface
 {
     public function __construct(Request $request);
 
-    public function download(string $url, Rotator $rotator, array $postParams, array $headers, Logger $logger): Response;
+    public function download(string $url, Rotator $rotator, $postParams, array $headers, Logger $logger): Response;
 }

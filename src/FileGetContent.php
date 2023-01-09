@@ -12,7 +12,7 @@ class FileGetContent implements MotorInterface
         $this->request = $request;
     }
 
-    public function download(string $url, Rotator $rotator, array $postParams, array $headers, Logger $logger): Response
+    public function download(string $url, Rotator $rotator, $postParams, array $headers, Logger $logger): Response
     {
         $header = $this->getHeader($headers);
         $context = [

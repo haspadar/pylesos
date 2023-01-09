@@ -17,7 +17,7 @@ class PylesosService
         return self::get($url, $headers, $env, 1);
     }
 
-    public static function postWithoutProxy(string $url, array $postParams, array $headers, array $env): Response
+    public static function postWithoutProxy(string $url, $postParams, array $headers, array $env): Response
     {
         $env['ROTATOR_URL'] = '';
         $env['PROXY'] = '';
@@ -26,7 +26,7 @@ class PylesosService
         return self::post($url, $postParams, $headers, $env, 1);
     }
 
-    public static function post(string $url, array $postParams, array $headers, array $env, int $count = 20): Response
+    public static function post(string $url, $postParams, array $headers, array $env, int $count = 20): Response
     {
         return self::download($url, $postParams, $headers, $env, $count);
     }
@@ -36,7 +36,7 @@ class PylesosService
         return self::download($url, [], $headers, $env, $count);
     }
 
-    public static function download(string $url, array $postParams, array $headers, array $env, int $count): Response
+    public static function download(string $url, $postParams, array $headers, array $env, int $count): Response
     {
         $env['URL'] = $url;
         $request = new Request($env);
