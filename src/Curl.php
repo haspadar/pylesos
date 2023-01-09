@@ -38,7 +38,11 @@ class Curl implements MotorInterface
         }
 
         if ($postParams) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postParams));
+            curl_setopt(
+                $ch,
+                CURLOPT_POSTFIELDS,
+                is_array($postParams) ? http_build_query($postParams) : $postParams
+            );
             curl_setopt($ch, CURLOPT_POST, 1);
         }
 
