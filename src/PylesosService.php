@@ -71,7 +71,7 @@ class PylesosService
         }
     }
 
-    private static function getRotator(Request $request, Logger $logger): Rotator
+    public static function getRotator(Request $request, Logger $logger): Rotator
     {
         if (!self::$rotator || !self::$rotator->getProxies()) {
             self::$rotator = new Rotator($request, $logger);
